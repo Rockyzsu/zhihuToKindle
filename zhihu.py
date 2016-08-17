@@ -1,12 +1,12 @@
+#-*-coding=utf-8-*-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from bs4 import BeautifulSoup
-from email.MIMEBase import MIMEBase
 from email import Encoders
 import smtplib
 from email import Encoders,Utils
 from email.Header import Header
-import urllib2,urllib,time,datetime,codecs,sys,re,sys,os
+import urllib2,urllib,time,datetime,codecs,re,sys,os
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -108,7 +108,9 @@ class MailAtt():
 		
 		self.smtp.sendmail(self.msg['from'],self.msg['to'],self.msg.as_string())
 		self.smtp.quit()
-		
+
+
+
 if __name__=="__main__":
 
 	sub_folder=os.path.join(os.getcwd(),"content")
