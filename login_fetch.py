@@ -43,10 +43,10 @@ def Login():
     login_url='http://www.zhihu.com/login/email'
     data={
     '_xsrf':xsrf,
-    'password':'javalinux',
+    'password':'xxxxxx',
     'captcha_type':'cn',
     'remember_me':'true',
-    'email':'chen_jinwei@126.com'
+    'email':'xxxxxx@126.com'
     }
 
     content=session.post(login_url,data=data,headers=headers)
