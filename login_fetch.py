@@ -4,6 +4,10 @@ import requests
 import cookielib
 import re
 import json
+import time
+import StringIO
+import Image
+import os
 from getContent import GetContent
 agent='Mozilla/5.0 (Windows NT 5.1; rv:33.0) Gecko/20100101 Firefox/33.0'
 headers={'Host':'www.zhihu.com',
@@ -36,6 +40,17 @@ def get_xsrf():
     result=re.findall(r'<input type=\"hidden\" name=\"_xsrf\" value=\"(\w+)\"/>',txt)[0]
     return result
 
+def getCaptcha():
+    #r=1471341285051
+    r=(time.time()*1000)
+    url='http://www.zhihu.com/captcha.gif?r='+str(r)+'&type=login'
+
+    image=session.get(url,headers=headers)
+    f=open("photo.jpg",'wb')
+    f.write(image.content)
+    f.close()
+
+
 def Login():
     xsrf=get_xsrf()
     print xsrf
@@ -43,16 +58,39 @@ def Login():
     login_url='http://www.zhihu.com/login/email'
     data={
     '_xsrf':xsrf,
-    'password':'xxxxxx',
-    'captcha_type':'cn',
+    'password':'*',
     'remember_me':'true',
-    'email':'xxxxxx@126.com'
+    'email':'*'
     }
+    try:
+        content=session.post(login_url,data=data,headers=headers)
+        login_code=content.text
+        print content.status_code
+        #this line important ! if no status, if will fail and execute the except part
+        #print content.status
 
-    content=session.post(login_url,data=data,headers=headers)
-    print content.status_code
-    print content.text
-    session.cookies.save()
+        if content.status_code != requests.codes.ok:
+            print "Need to verification code !"
+            getCaptcha()
+            #print "Please input the code of the captcha"
+            code=raw_input("Please input the code of the captcha")
+            data['captcha']=code
+            content=session.post(login_url,data=data,headers=headers)
+            print content.status_code
+
+            if content.status_code==requests.codes.ok:
+                print "Login successful"
+                session.cookies.save()
+
+
+
+
+            #print login_code
+        else:
+            session.cookies.save()
+    except:
+        print "Error in login"
+        return False
 
 def focus_question():
     focus_id=[]
@@ -61,7 +99,8 @@ def focus_question():
     print content
     p=re.compile(r'<a class="question_link" href="/question/(\d+)" target="_blank" data-id')
     id_list=p.findall(content.text)
-    result=re.findall(r'<input type=\"hidden\" name=\"_xsrf\" value=\"(\w+)\"/>',content.text)[0]
+    pattern=re.compile(r'<input type=\"hidden\" name=\"_xsrf\" value=\"(\w+)\"/>')
+    result=re.findall(pattern,content.text)[0]
     print result
     for i in id_list:
         print i
@@ -70,7 +109,7 @@ def focus_question():
     url_next='https://www.zhihu.com/node/ProfileFollowedQuestionsV2'
     page=20
     offset=20
-    end_page=10000
+    end_page=500
     xsrf=re.findall(r'<input type=\"hidden\" name=\"_xsrf\" value=\"(\w+)\"',content.text)[0]
     while offset < end_page:
         #para='{"offset":20}'
@@ -79,14 +118,12 @@ def focus_question():
         params={"offset":offset}
         params_json=json.dumps(params)
 
-
-
         data={
         'method':'next',
         'params':params_json,
         '_xsrf':xsrf
         }
-        print data
+        #print data
         offset=offset+page
         headers_l={
         'Host':'www.zhihu.com',
@@ -97,23 +134,48 @@ def focus_question():
         }
         try:
             s=session.post(url_next,data=data,headers=headers_l)
-            print s.text
-            msgs=s.text
+            #print s.status_code
+            #print s.text
+            msgs=json.loads(s.text)
             msg=msgs['msg']
             for i in msg:
-                print i
-            #list_left=p.findall(s.text)
+                id_sub=re.findall(p,i)
+                #print i
+                for j in id_sub:
+                    print j
+                    id_list.append(j)
+                #print i
+                #list_left=p.findall(j)
+
             #for j in list_left:
             #   print j
+
         except:
             print "Getting Error "
 
+
+    return id_list
+
 def main():
+
     if isLogin():
         print "Has login"
     else:
+        print "Need to login"
         Login()
-    focus_question()
+    list_id=focus_question()
+    for i in list_id:
+        print i
+        obj=GetContent(i)
 
+    #getCaptcha()
 if __name__=='__main__':
+    sub_folder=os.path.join(os.getcwd(),"content")
+    #专门用于存放下载的电子书的目录
+
+    if not os.path.exists(sub_folder):
+        os.mkdir(sub_folder)
+
+    os.chdir(sub_folder)
+
     main()

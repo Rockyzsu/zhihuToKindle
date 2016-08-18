@@ -15,13 +15,13 @@ sys.setdefaultencoding('utf-8')
 class GetContent():
 
     def __init__(self,id):
-        sub_folder=os.path.join(os.getcwd(),"content")
+        #sub_folder=os.path.join(os.getcwd(),"content")
 	#专门用于存放下载的电子书的目录
 
-        if not os.path.exists(sub_folder):
-            os.mkdir(sub_folder)
+        #if not os.path.exists(sub_folder):
+        #    os.mkdir(sub_folder)
 
-        os.chdir(sub_folder)
+        #os.chdir(sub_folder)
 
 
         #给出的第一个参数 就是你要下载的问题的id
@@ -47,11 +47,20 @@ class GetContent():
         #构造header 伪装一下
         header={"User-Agent":user_agent}
         req=urllib2.Request(url,headers=header)
-        resp=urllib2.urlopen(req)
-
+        try:
+            resp=urllib2.urlopen(req)
+        except:
+            print "Time out. Retry"
+            time.sleep(30)
+            #try to switch with proxy ip
+            resp=urllib2.urlopen(req)
         #这里已经获取了 网页的代码，接下来就是提取你想要的内容。 使用beautifulSoup 来处理，很方便
+        try:
+            bs=BeautifulSoup(resp)
 
-        bs=BeautifulSoup(resp,"html.parser")
+        except:
+            print "Beautifulsoup error"
+            return None
         title=bs.title
         #获取的标题
 
@@ -71,10 +80,11 @@ class GetContent():
 
         self.save2file(filename,"\n\n\n\n--------------------Detail----------------------\n\n")
         #获取问题的补充内容
+        if detail is not None:
 
-        for i in detail.strings:
+            for i in detail.strings:
 
-            self.save2file(filename,unicode(i))
+                self.save2file(filename,unicode(i))
 
         answer=bs.find_all("div",class_="zm-editable-content clearfix")
         k=0
@@ -93,8 +103,8 @@ class GetContent():
         from_mail='your@126.com'
         password='yourpassword'
         to_mail='yourname@kindle.cn'
-        send_kindle=MailAtt(smtp_server,from_mail,password,to_mail)
-        send_kindle.send_txt(filename)
+        #send_kindle=MailAtt(smtp_server,from_mail,password,to_mail)
+        #send_kindle.send_txt(filename)
         #调用发送邮件函数，把电子书发送到你的kindle用户的邮箱账号，这样你的kindle就可以收到电子书啦
         print filename
 
@@ -132,6 +142,7 @@ class MailAtt():
 
 
 
+
 if __name__=="__main__":
 
 	sub_folder=os.path.join(os.getcwd(),"content")
@@ -147,8 +158,9 @@ if __name__=="__main__":
 	#比如 想要下载的问题链接是 https://www.zhihu.com/question/29372574
 	#那么 就输入 python zhihu.py 29372574
 
-	id_link="/question/"+id
-	getAnswer(id_link)
+	#id_link="/question/"+id
+	obj=GetContent(id)
+    #obj.getAnswer(id_link)
 	#调用获取函数
 
 	print "Done"
