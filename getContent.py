@@ -3,14 +3,10 @@ __author__ = 'Rocky'
 # -*-coding=utf-8-*-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email import Encoders
 import smtplib
 from email import Encoders, Utils
 import urllib2
-import urllib
 import time
-import datetime
-import codecs
 import re
 import sys
 import os
@@ -25,16 +21,6 @@ sys.setdefaultencoding('utf-8')
 
 class GetContent():
     def __init__(self, id):
-
-        # sub_folder=os.path.join(os.getcwd(),"content")
-        # 专门用于存放下载的电子书的目录
-
-        # if not os.path.exists(sub_folder):
-        #    os.mkdir(sub_folder)
-
-        # os.chdir(sub_folder)
-
-
 
         # 给出的第一个参数 就是你要下载的问题的id
         # 比如 想要下载的问题链接是 https://www.zhihu.com/question/29372574
@@ -83,13 +69,10 @@ class GetContent():
         # 用来保存内容的文件名，因为文件名不能有一些特殊符号，所以使用正则表达式过滤掉
 
         self.save2file(filename, title.string)
-        title_content = title.string
 
-        answer = []
 
         detail = bs.find("div", class_="zm-editable-content")
-        user_ids = bs.find_all("a", class_="author-link")
-
+        self.save2file(filename, "\n\n\n\n--------------------Link %s ----------------------\n\n"  %url)
         self.save2file(filename, "\n\n\n\n--------------------Detail----------------------\n\n")
         # 获取问题的补充内容
 

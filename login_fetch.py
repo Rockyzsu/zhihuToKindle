@@ -5,8 +5,6 @@ import cookielib
 import re
 import json
 import time
-import StringIO
-import Image
 import os
 from getContent import GetContent
 agent='Mozilla/5.0 (Windows NT 5.1; rv:33.0) Gecko/20100101 Firefox/33.0'
@@ -81,10 +79,6 @@ def Login():
             if content.status_code==requests.codes.ok:
                 print "Login successful"
                 session.cookies.save()
-
-
-
-
             #print login_code
         else:
             session.cookies.save()
@@ -123,7 +117,7 @@ def focus_question():
         'params':params_json,
         '_xsrf':xsrf
         }
-        #print data
+        #注意上面那里 post的data需要一个xsrf的字段，不然会返回403 的错误，这个在抓包的过程中一直都没有看到提交到xsrf，所以自己摸索出来的
         offset=offset+page
         headers_l={
         'Host':'www.zhihu.com',
@@ -140,15 +134,10 @@ def focus_question():
             msg=msgs['msg']
             for i in msg:
                 id_sub=re.findall(p,i)
-                #print i
+
                 for j in id_sub:
                     print j
                     id_list.append(j)
-                #print i
-                #list_left=p.findall(j)
-
-            #for j in list_left:
-            #   print j
 
         except:
             print "Getting Error "
