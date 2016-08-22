@@ -58,11 +58,13 @@ def Login():
     '_xsrf':xsrf,
     'password':'*',
     'remember_me':'true',
-    'email':'*'
+    'email':'*@*.com'
     }
     try:
         content=session.post(login_url,data=data,headers=headers)
         login_code=content.text
+        d= json.loads(login_code)
+        print d['msg']
         print content.status_code
         #this line important ! if no status, if will fail and execute the except part
         #print content.status
@@ -153,12 +155,6 @@ def main():
         print "Need to login"
         Login()
     list_id=focus_question()
-    for i in list_id:
-        print i
-        obj=GetContent(i)
-
-    #getCaptcha()
-if __name__=='__main__':
     sub_folder=os.path.join(os.getcwd(),"content")
     #专门用于存放下载的电子书的目录
 
@@ -166,5 +162,12 @@ if __name__=='__main__':
         os.mkdir(sub_folder)
 
     os.chdir(sub_folder)
+    for i in list_id:
+        print i
+        obj=GetContent(i)
+
+    #getCaptcha()
+if __name__=='__main__':
+
 
     main()

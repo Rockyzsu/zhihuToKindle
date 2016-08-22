@@ -18,7 +18,6 @@ from email.Header import Header
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
 class GetContent():
     def __init__(self, id):
 
@@ -47,21 +46,30 @@ class GetContent():
 
         try:
             resp = urllib2.urlopen(req)
+            content= resp.read()
+            if content is None:
+                print "Empty"
+                return None
         except:
             print "Time out. Retry"
             time.sleep(30)
             # try to switch with proxy ip
             resp = urllib2.urlopen(req)
+            content = resp.read()
+            if content is None:
+                print "Empty"
+                return None
         # 这里已经获取了 网页的代码，接下来就是提取你想要的内容。 使用beautifulSoup 来处理，很方便
         try:
-            bs = BeautifulSoup(resp)
+            bs = BeautifulSoup(content)
 
         except:
             print "Beautifulsoup error"
             return None
-
+        print content
         title = bs.title
         # 获取的标题
+        print title
 
         filename_old = title.string.strip()
         print filename_old
@@ -150,7 +158,8 @@ if __name__ == "__main__":
 
     os.chdir(sub_folder)
 
-    id = sys.argv[1]
+    id="20357585"
+    #id = sys.argv[1]
     # 给出的第一个参数 就是你要下载的问题的id
     # 比如 想要下载的问题链接是 https://www.zhihu.com/question/29372574
     # 那么 就输入 python zhihu.py 29372574
