@@ -147,6 +147,8 @@ class MailAtt():
         self.smtp.sendmail(self.msg['from'], self.msg['to'], self.msg.as_string())
         self.smtp.quit()
 
+#Todo
+#add id list to database
 
 if __name__ == "__main__":
 
