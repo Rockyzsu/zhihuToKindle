@@ -49,7 +49,7 @@ class GetContent():
             content= resp.read()
             if content is None:
                 print "Empty"
-                return None
+                return False
         except:
             print "Time out. Retry"
             time.sleep(30)
@@ -58,19 +58,24 @@ class GetContent():
             content = resp.read()
             if content is None:
                 print "Empty"
-                return None
+                return False
         # 这里已经获取了 网页的代码，接下来就是提取你想要的内容。 使用beautifulSoup 来处理，很方便
         try:
             bs = BeautifulSoup(content)
 
         except:
             print "Beautifulsoup error"
-            return None
-        print content
+            return False
+        #print content
         title = bs.title
         # 获取的标题
         print title
-
+        if title is None:
+            print "TITL is empty"
+            return False
+        if title.string is None:
+            print "String is empty"
+            return False
         filename_old = title.string.strip()
         print filename_old
         filename = re.sub('[\/:*?"<>|]', '-', filename_old)
@@ -84,10 +89,14 @@ class GetContent():
         self.save2file(filename, "\n\n\n\n--------------------Detail----------------------\n\n")
         # 获取问题的补充内容
 
+
         if detail is not None:
 
             for i in detail.strings:
                 self.save2file(filename, unicode(i))
+
+        else:
+            return False
 
         answer = bs.find_all("div", class_="zm-editable-content clearfix")
         k = 0

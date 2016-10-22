@@ -56,9 +56,9 @@ def Login():
     login_url='http://www.zhihu.com/login/email'
     data={
     '_xsrf':xsrf,
-    'password':'*',
+    'password':'你的密码',
     'remember_me':'true',
-    'email':'*@*.com'
+    'email':'你的邮箱'
     }
     try:
         content=session.post(login_url,data=data,headers=headers)
@@ -162,10 +162,35 @@ def main():
         os.mkdir(sub_folder)
 
     os.chdir(sub_folder)
-    for i in list_id:
-        print i
-        obj=GetContent(i)
+    #把list保存起来
+    old_list=[]
+    if not os.path.exists("list.txt"):
+        print "list.txt not existed"
+        fp=open('list.txt','a')
+        sep='\n'
+        fp.write(sep.join(list_id))
+        fp.close()
+    else:
+        old_list_file=open('list.txt','r').readlines()
+        for i in old_list_file:
+            old_list.append(i)
 
+        print old_list
+
+    new_list=list(set(old_list+list_id))
+
+    fail_file=open("failed_list.txt",'w')
+    for i in new_list:
+
+        #print i
+        obj=GetContent(i)
+        if obj == False:
+            print "stop on %s" %i
+            fail_file.write(i)
+    fail_file.close()
+    new_fp=open("list.txt",'w')
+    new_fp.write(sep.join(new_list))
+    new_fp.close()
     #getCaptcha()
 if __name__=='__main__':
 
