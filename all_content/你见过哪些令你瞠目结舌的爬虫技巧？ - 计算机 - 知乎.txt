@@ -1,0 +1,368 @@
+
+
+
+你见过哪些令你瞠目结舌的爬虫技巧？ - 计算机 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/38192299 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+瞠目结舌系列：http://www.zhihu.com/question/38241342
+
+-------------------------answer 0 via  -------------------------
+
+
+第一条：you-get（Releases · soimort/you-get · GitHub，这里面有各种发布版本）。什么，你不知道？想爬取视频网站的视频和图片分享网站的图片，是不是就得造个轮子写个爬虫？No，你只需要：❯ pip3 install you-get
+能干什么呢？我提供几个例子：1. 下载优酷视频❯ you-get http://v.youku.com/v_show/id_XMTc1MDQwODMxNg\=\=.html
+site:                优酷 (Youku)
+title:               麻雀 51
+stream:
+    - format:        hd2
+      container:     flv
+      video-profile: 超清
+      size:          552.9 MiB (579718488 bytes)
+    # download-with: you-get --format=hd2 [URL]
+
+Downloading 麻雀 51.flv ...
+ 100% (552.9/552.9MB) ├██████████████████████████████████████████████████████████████████████████┤[16/16]    9 MB/s
+Merging video parts... Merged into 麻雀 51.mp4
+评论区 @xavierskip 提到可以使用-p观看无广告的优酷视频！我在Mac上使用的是mplayer，安装和使用方法如下：❯ brew install mplayer  
+❯ you-get -p /usr/local/Cellar/mplayer/1.3.0/bin/mplayer  http://v.youku.com/v_show/id_XMTc1MDQwODMxNg==.html 
+这样就可以使用本地播放器播放了2. B站❯ you-get http://www.bilibili.com/video/av6543659/
+Site:       bilibili.com
+Title:      【张继科】论张继科的CP是如何被国胖队手撕的
+Type:       Flash video (video/x-flv)
+Size:       28.2 MiB (29567551 Bytes)
+
+Downloading 【张继科】论张继科的CP是如何被国胖队手撕的.flv ...
+ 100% ( 28.2/ 28.2MB) ├████████████████████████████████████████████████████████████████████████████┤[1/1]    7 MB/s
+
+Downloading 【张继科】论张继科的CP是如何被国胖队手撕的.cmt.xml ...
+3. 网易云音乐❯ you-get http://music.163.com/\#/song\?id\=424262521        
+Site:       163.com
+Title:      5. Rolling in the deep
+Type:       MP3 (audio/mpeg)
+Size:       5.86 MiB (6144044 Bytes)
+
+Downloading 5. Rolling in the deep.mp3 ...
+ 100% (  5.9/  5.9MB) ├████████████████████████████████████████████████████████████████████████████┤[1/1]   16 MB/s
+
+Saving 5. Rolling in the deep.lrc ...Done.
+4. 花瓣画板❯ you-get http://huaban.com/boards/27965679/                       
+Site:       花瓣 (Huaban)
+Title:      黑板画
+Type:       JPEG Image (image/jpeg)
+Size:       inf MiB (inf Bytes)
+
+Downloading 595209478.jpeg ...
+ 0.0% (  0.1/  infMB) ├────────────────────────────────────────────────────────────────────────────┤[1/1]  114 kB/s
+
+Downloading 595209312.jpeg ...
+ 0.0% (  0.0/  infMB) ├────────────────────────────────────────────────────────────────────────────┤[1/1]  152 kB/s
+
+Downloading 595209225.jpeg ...
+ 0.0% (  0.1/  infMB) ├────────────────────────────────────────────────────────────────────────────┤[1/1]  344 kB/s
+
+Downloading 595209031.jpeg ...
+ 0.0% (  0.0/  infMB) ├────────────────────────────────────────────────────────────────────────────┤[1/1]  119 kB/s
+
+Downloading 595208942.jpeg ...
+ 0.0% (  0.1/  infMB) ├────────────────────────────────────────────────────────────────────────────┤[1/1]  248 kB/s
+
+.... 图片太多就展示到这里吧 (๑>◡<๑) 
+支持的网站太多，还是去GitHub - soimort/you-get: Dumb downloader that scrapes the web看吧，如果你有其他网站的需求，欢迎去PR添加支持，未来让其他同学也能受益。还不快去用！！！you-get的可扩展爬虫实现非常值得学习，相信给它贡献代码甚至读了它的源码都会对你的爬虫技术有所提高的。第二条： 不要只看 Web 网站, 还有移动版、 App 和 H5, 它们的反爬虫措施一般比较少, 所有社交网站爬虫, 优先选择爬移动版。 这条大家好像都是直接忽略的... 忧伤
+
+
+-------------------------answer 1 via  -------------------------
+
+
+这几天写了一个爬虫，这是我关于反爬虫的一些总结： 常见的反爬虫和应对方法 - Python Hacker - 知乎专栏刚开始写爬虫用的是urllib2，后来知道了requests，惊为天人。刚开始解析网页用的是re，后来知道了BeautifulSoup，解析页面不能再轻松。再后来看别人的爬虫，知道了scrapy，被这个框架惊艳到了。之后遇到了一些有验证码的网站，于是知道了PIL。但后来知道了opencv，pybrain。当在爬虫中用上人工神经网络识别出验证码，兴奋得守在爬虫旁边看他爬完全站。再后来知道了threading，知道了celery。不断的学习，不断的接触和知道更多的东西，爬虫与反爬虫的对抗会一直进行下去。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+说一个我的，不算瞠目结舌。我当时爬一个网站的时候需要大量代理，正好手上有不少PHP的虚拟空间，就是万网卖的那种，几十块钱一年，只能上传PHP代码。我就用PHP写了一个代理脚本，应该算应用层代理了吧，还加了双向接口验证，伪装成普通文件，瞬间有了几十个代理，一直在用，这个代理好像也不可追踪。===========================================================其实非常简单，把url用GET 或者POST提交给PHP脚本，脚本用file_put_contents(url)获取数据，然后把数据返回给你就行了。完全匿名哈哈。
+
+
+-------------------------answer 3 via  -------------------------
+
+
+# python框架tornado官方文档爬虫示例
+
+import time
+from datetime import timedelta
+
+try:
+    from HTMLParser import HTMLParser
+    from urlparse import urljoin, urldefrag
+except ImportError:
+    from html.parser import HTMLParser
+    from urllib.parse import urljoin, urldefrag
+
+from tornado import httpclient, gen, ioloop, queues
+
+base_url = 'http://www.tornadoweb.org/en/stable/'
+concurrency = 10
+
+
+@gen.coroutine
+def get_links_from_url(url):
+    """Download the page at `url` and parse it for links.
+
+    Returned links have had the fragment after `#` removed, and have been made
+    absolute so, e.g. the URL 'gen.html#tornado.gen.coroutine' becomes
+    'http://www.tornadoweb.org/en/stable/gen.html'.
+    """
+    try:
+        response = yield httpclient.AsyncHTTPClient().fetch(url)
+        print('fetched %s' % url)
+
+        html = response.body if isinstance(response.body, str) \
+            else response.body.decode()
+        urls = [urljoin(url, remove_fragment(new_url))
+                for new_url in get_links(html)]
+    except Exception as e:
+        print('Exception: %s %s' % (e, url))
+        raise gen.Return([])
+
+    raise gen.Return(urls)
+
+
+def remove_fragment(url):
+    pure_url, frag = urldefrag(url)
+    return pure_url
+
+
+def get_links(html):
+    class URLSeeker(HTMLParser):
+        def __init__(self):
+            HTMLParser.__init__(self)
+            self.urls = []
+
+        def handle_starttag(self, tag, attrs):
+            href = dict(attrs).get('href')
+            if href and tag == 'a':
+                self.urls.append(href)
+
+    url_seeker = URLSeeker()
+    url_seeker.feed(html)
+    return url_seeker.urls
+
+
+@gen.coroutine
+def main():
+    q = queues.Queue()
+    start = time.time()
+    fetching, fetched = set(), set()
+
+    @gen.coroutine
+    def fetch_url():
+        current_url = yield q.get()
+        try:
+            if current_url in fetching:
+                return
+
+            print('fetching %s' % current_url)
+            fetching.add(current_url)
+            urls = yield get_links_from_url(current_url)
+            fetched.add(current_url)
+
+            for new_url in urls:
+                # Only follow links beneath the base URL
+                if new_url.startswith(base_url):
+                    yield q.put(new_url)
+
+        finally:
+            q.task_done()
+
+    @gen.coroutine
+    def worker():
+        while True:
+            yield fetch_url()
+
+    q.put(base_url)
+
+    # Start workers, then wait for the work queue to be empty.
+    for _ in range(concurrency):
+        worker()
+    yield q.join(timeout=timedelta(seconds=300))
+    assert fetching == fetched
+    print('Done in %d seconds, fetched %s URLs.' % (
+        time.time() - start, len(fetched)))
+
+
+if __name__ == '__main__':
+    import logging
+    logging.basicConfig()
+    io_loop = ioloop.IOLoop.current()
+    io_loop.run_sync(main)
+来自tornado官方文档Queue example，这个是tornado示例里一个高效的异步爬虫。可以用来爬一些万级页面数量的网站。稍微改下自己用: pip install tornado#!/usr/bin/env python
+# -*- coding:utf-8 -*-
+
+import time
+from datetime import timedelta
+from tornado import httpclient, gen, ioloop, queues
+import traceback
+
+
+class AsySpider(object):
+    """A simple class of asynchronous spider."""
+    def __init__(self, urls, concurrency=10, results=None, **kwargs):
+        urls.reverse()
+        self.urls = urls
+        self.concurrency = concurrency
+        self._q = queues.Queue()
+        self._fetching = set()
+        self._fetched = set()
+        if results is None:
+            self.results = []
+
+    def fetch(self, url, **kwargs):
+        fetch = getattr(httpclient.AsyncHTTPClient(), 'fetch')
+        return fetch(url, raise_error=False, **kwargs)
+
+    def handle_html(self, url, html):
+        """handle html page"""
+        print(url)
+
+    def handle_response(self, url, response):
+        """inherit and rewrite this method if necessary"""
+        if response.code == 200:
+            self.handle_html(url, response.body)
+
+        elif response.code == 599:    # retry
+            self._fetching.remove(url)
+            self._q.put(url)
+
+    @gen.coroutine
+    def get_page(self, url):
+        try:
+            response = yield self.fetch(url)
+            #print('######fetched %s' % url)
+        except Exception as e:
+            print('Exception: %s %s' % (e, url))
+            raise gen.Return(e)
+        raise gen.Return(response)
+
+    @gen.coroutine
+    def _run(self):
+        @gen.coroutine
+        def fetch_url():
+            current_url = yield self._q.get()
+            try:
+                if current_url in self._fetching:
+                    return
+
+                #print('fetching****** %s' % current_url)
+                self._fetching.add(current_url)
+
+                response = yield self.get_page(current_url)
+                self.handle_response(current_url, response)    # handle reponse
+
+                self._fetched.add(current_url)
+
+                for i in range(self.concurrency):
+                    if self.urls:
+                        yield self._q.put(self.urls.pop())
+
+            finally:
+                self._q.task_done()
+
+        @gen.coroutine
+        def worker():
+            while True:
+                yield fetch_url()
+
+        self._q.put(self.urls.pop())    # add first url
+
+        # Start workers, then wait for the work queue to be empty.
+        for _ in range(self.concurrency):
+            worker()
+
+        yield self._q.join(timeout=timedelta(seconds=300000))
+        try:
+            assert self._fetching == self._fetched
+        except AssertionError:
+            print(self._fetching-self._fetched)
+            print(self._fetched-self._fetching)
+
+    def run(self):
+        io_loop = ioloop.IOLoop.current()
+        io_loop.run_sync(self._run)
+
+
+class MySpider(AsySpider):
+
+    def fetch(self, url, **kwargs):
+        """重写父类fetch方法可以添加cookies，headers，timeout等信息"""
+        cookies_str = "PHPSESSID=j1tt66a829idnms56ppb70jri4; pspt=%7B%22id%22%3A%2233153%22%2C%22pswd%22%3A%228835d2c1351d221b4ab016fbf9e8253f%22%2C%22_code%22%3A%22f779dcd011f4e2581c716d1e1b945861%22%7D; key=%E9%87%8D%E5%BA%86%E5%95%84%E6%9C%A8%E9%B8%9F%E7%BD%91%E7%BB%9C%E7%A7%91%E6%8A%80%E6%9C%89%E9%99%90%E5%85%AC%E5%8F%B8; think_language=zh-cn; SERVERID=a66d7d08fa1c8b2e37dbdc6ffff82d9e|1444973193|1444967835; CNZZDATA1254842228=1433864393-1442810831-%7C1444972138"
+        headers = {
+            'User-Agent': 'mozilla/5.0 (compatible; baiduspider/2.0; +http://www.baidu.com/search/spider.html)',
+            'cookie': cookies_str
+        }
+        return super(MySpider, self).fetch(
+            url, headers=headers
+        )
+
+    def handle_html(self, url, html):
+        #print(url, html)
+        print(url)
+
+
+def main():
+    urls = []
+    for page in range(1, 10000):
+        urls.append('http://www.baidu.com/?page=%s' % page)
+    s = MySpider(urls)
+    s.run()
+
+
+if __name__ == '__main__':
+    main()
+网速好的话，一万个页面应该是在2到4分钟之内，充分利用了异步优势。不过代码真不算好看。
+
+
+-------------------------answer 4 via  -------------------------
+
+
+说一个只有在大规模爬取的时候才用得到的技巧吧.比如你在建立一个汽车数据库, 需要从 上百万各种来源爬一大堆元数据, 肯定不能靠人了, 训练一个模型也太花时间.有一种简单可行的办法, 首先去google或者垂直网站抓元数据想办法将元数据与它来源的url配对 (比如google肯定会有来源url)这样对于一个url, 你能知道它的提取结果是什么, 然后能找到对应页面什么位置然后逆向出页面模板因为这些页面都是模板生成的, 于是对整站套用模板, ok, 数据出来了.
+
+
+-------------------------answer 5 via  -------------------------
+
+
+之前都是在本地找个开源框架写爬虫，现在发现可以在云上写爬虫了，几行代码搞定直接上线跑。源码地址：GitHub - ShenJianShou/crawler_samples: 各种爬取规则示例，可以直接在 神箭手云爬虫开发平台 上运行
+
+
+-------------------------answer 6 via  -------------------------
+
+
+因为正在搞一套自用爬虫框架所以冒个泡泡……写爬虫什么的……我想说纯Python爬虫写起来并不爽啊……要爽必须是Python写分布式调度+CasperJS/PhantomJS的神奇组合。CasperJS已经把写爬虫从构造请求的层面拽到了模拟动作的层面，以至于以前要费劲抓异步请求看js凑参数一系列流程变成了点击、填表、点击这样的动作模拟，对于一脸的ajax页面和所谓的SPA应用抓起来跟玩一样……啊当然这套办法对搜索引擎式的通用爬虫还是不太好使的，毕竟慢不少。
+
+
+-------------------------answer 7 via  -------------------------
+
+
+人肉爬虫
+
+
+-------------------------answer 8 via  -------------------------
+
+
+瞠目结舌啊？有个爬虫变着UA爬我的站。。。然而IP没变。。。于是就给封掉了。。。瞠目结舌啊！
+
+
+-------------------------answer 9 via  -------------------------
+
+
+额，说个囧事吧。最近在学go，随手用go写了个小爬虫，从入口页开始解析并找到站内地址，然后开个goroutine去爬，对，没有控制线程数。用的公司的代理出口，然后顺手用hduoj做测试，结果瞬间把它爬挂了…我真的只是测试一下代码而已，不是故意DOS你们的啊…

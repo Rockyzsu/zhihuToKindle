@@ -1,0 +1,78 @@
+
+
+
+GitHub 上有哪些适合新人围观的 Android 项目？ - Java - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/28481864 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+2 年网站开发经验，5 年 Android 开发经验，也一直在推动 Android 开源 - Trinea GitHub，我应该还是比较有资格回答这个问题的，关于我的介绍可以看：关于 Trinea虽然我也可以罗列几十个项目然后给你些高大上的动态图，但那对你没用，希望这篇全面的梳理分享能帮到更多人。下面介绍包括几个部分：(1) GitHub 上有哪些 Android 开源项目 (2) 哪些项目适合新手学习 (3) 如何获取最新的 Android 开源项目 (4) 开源项目怎么学习 (5) 开源项目源码解析1. GitHub 上有哪些 Android 开源项目目前收藏 Android 开源库比较多的有 Android 开源项目集合和中英文搜索，Android Libraries and Resources， Android Arsenal，Android Libraries and Resources，另有 Libraries for developers，DevAppsDirect 等 App 集合了很多开源库。更多介绍可以参考我之前的整理：Android 开源库获取途径整理其中 Android 开源项目集合和中英文搜索 是我在维护，包括 2000+ 开源项目，支持中文搜索，每一个都有中文介绍及大家喜欢的酷炫示例图。2. 哪些项目适合新人围观这个问题我没法给你列几个项目，具体原因我在下面介绍。从上面的图中也可以看出来了，开源项目巨多，分类很细。如果你是 Android 新手建议从简单的自定义 View 开始，如自定义 ImageView、TextView；然后到复杂的自定义 View，如功能很全的自定义 ListView；最后是大型的公共库，如 Volley、UIL、Dagger。另说下 Volley 是建议每个中高级开发者学习的库，因为他真的很棒。但如果是新手，你还真不一定看得懂。最后你要针对自己的需要来看，(1) 有紧迫和压力感更快 (2) 开源库太多你根本不可能完全学过来，就跟少林七二绝技有生之年你学会一二就已经差不多了 (3) 很多库原理类似可举一反三。如果你想学习某个项目源码可以先看我们组织的 Android 开源项目源码分析，每篇都是精品，我就不解释了。另 Volley 的源码地址也不是排名第一提到的 mcxiaoke/android-volley，那只是国人的映射罢了...，具体地址可见 Volley 源码解析 开头。授人以渔3. 如何获取最新的 Android 开源项目(1). 每天看 Android 开源项目集合，及时自动收录最新开源项目。(2). Follow Android-Dev-ComAndroid-Dev-Cn 这些开发者的 Github 帐号，每天从自己的 News Feed 中看他们的动态。你也可以直接 Follow 我 Trinea's following 的人。(3). 看 Trending  repositories on GitHub today · GitHub养成每天逛 GitHub 的习惯是个优秀的习惯。进阶篇4. 开源项目怎么学习如果只是简单的学习的话可以根据 API 逐步 Debug 进去，不断深入和反复即可。全面而系统的学习的话，请移步查看我在 如何针对Github上某个Android开源项目进行学习？ - Trinea 的回答 的回答，其中也是 Android 开源项目源码解析第一期的规范文档5. 开源项目源码解析这是我们组织的 codeKK 开源项目源码分析 项目，我们相信应该知其然知其所以然。为了更好的了解并掌握优秀开源库原理，从简介、总体设计、流程图、详细设计全方面分析开源库源码。目前第一期完成，包括10个开源库及5个公共技术点的全面介绍。最后不管你需要什么别忘记了 Google，只要你要，它肯定有。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+好吧，我自己从大二开始慢慢学习安卓，到现在在某手机厂商做安卓，差不多搞了3年这东西，觉得有些东西题主可以参考参考了，写的不好，轻喷。1. Volley之所以把它放在第一个，是因为对于App来说，一个好的通信框架能够避免太多太多的BUG，也能够很大程度的提升软件的性能，相信有过安卓开发经验的人经常会被OOM搞到死吧= = ，一个好的框架能够很好地解决这个问题。Volley高度订制了网络请求的框架，同时给了我们很大的自由度来根据你自己的需求扩展这个几乎完美的方案，比如我自己，因为工作的需要，就在Volley中扩展了接口，使得请求回来的图片能够自带blur效果。mcxiaoke/android-volley · GitHub2. ListViewAnimation惊艳到我的列表动画库，功能极其强大，早期知乎APP的列表也引入了这个控件，能够让你在列表滑动的时候插入丰富的动画nhaarman/ListViewAnimations · GitHub3. RoundedImageView大多数App上的圆形头像基本上都是这个库干的好事，同时也能够根据你的需求生成带有圆角的图片，显示在对应控件上。vinc3m1/RoundedImageView · GitHub4. Android-PullToRefresh这个我就不多说了吧，来自CB大神的作品，个人觉得应该是App里面普及率最高的库了，下拉刷新控件，不单单支持列表的，还支持gridview，viewpager甚至webview，但是我这里要说一句，这个东西你理解他的思路就行了，太过时了，不推荐使用chrisbanes/Android-PullToRefresh · GitHub5.ActionBar-PullToRefresh和上面一个差不多的东西，我个人更加喜欢一点，是把刷新条集成在了ActionBar上面，同样来自CB大神的作品，实现机制和上面一个略有不同，了解一下即可，这东西也挺过时的，真正推荐你使用的是下面这个chrisbanes/ActionBar-PullToRefresh · GitHub6.SwipeRefreshLayout安卓发布的原生控件，专门用来实现下拉刷新功能的哦，效果很棒，最新的知乎App似乎也集成了这个东西，这个才是我推荐现在的App使用的东西，毕竟要与时俱进嘛，这个东西你可以在安卓LSDK的API demo目录下找到哦。chrisbanes/ActionBar-PullToRefresh · GitHub7.TwoWayView & RecycleView恩，之所以把这两个东西放这里，是因为前面一个是之前GitHub上很流行的三方列表控件，主要目的是基于现有的Adapter机制实现横向滑动的列表(因为谷歌爸爸的listview不行。。)，但是到了5.0之后，安卓发布了RecycleView，这个原生控件，可以很好地解决了这个问题，所以你两个一起结合着看吧哈。sarajmunjal/two-way-backport · GitHub8.SwipeMenuListView无需多言。。自己看图baoyongzhang/SwipeMenuListView · GitHub9.AndroidResideMenu和安卓版QQ的侧边栏抽屉一样的东西，对于安卓开发者来说，掌握抽屉的的实现还是很有必要的。SpecialCyCi/AndroidResideMenu · GitHub10.ProgressBar系列安卓的ProgressBar可定制的空间很大很大，所以很多优秀的应用上面往往会出现很多令人惊艳的设计哦，这里给你推荐两个progressBar。dmytrodanylyk/circular-progress-button · GitHubSefford/CircularProgressDrawable · GitHub11.PullScrollView很多App的个人主页就是采用了这个控件来做的，早期的微信朋友圈顶部你自己设置的背景中，也有这个控件的影子哦MarkMjw/PullScrollView · GitHub12. AndroidViewAnimations最后的最后列出了这个东西，不是希望你直接就copy一份下来用，而是希望你能够通过它的DEMO去看看他是怎么实现动画效果的，多用用属性动画吧同学，别在二了吧唧的用那种animation一样过时的达内产物了。daimajia/AndroidViewAnimations · GitHub-----------------------------------------------------------分锅线-----------------------------------------------------------------------好的，以上就是我觉得一些比较浅显但是你可能会需要的东西了，现在来和你讲讲我的想法，我周围的同事大多数也用github，很多程序员，说得难听一点真的就是伸手党，github上面拿一份鬼佬的代码下来放到工程里面能跑能用这事情就特么算完事了，也不反思一下人家是怎么实现的，往往需求改变了就以我是三方控件，这东西不能改这样的形式搪塞过去，很不负责也很愚蠢，其实往往很多时候三方控件具有很高的扩展性，但是其实更多时候，你直接用安卓原生的API就能达到效果，多研究研究android developer吧，同学。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+不请自来说点废话。何睿毅 前辈总结的非常好。不敢班门弄斧，只想说一下关于习惯的问题。现在的程序猿难道不会使用搜索引擎了吗？善用搜索，你会知道的更多。有哪些优秀的 Android 应用开源项目、特效、设计资料推荐？ - Android 开发Github上面如何寻找比较火的Android开源项目？ - GitHub读Android开源项目的工具, 有哪些？ - Android 开发GitHub 上有哪些值得关注和学习的经典 Android 项目？ - 移动开发如何使用github上的android开源项目? - AndroidAndroid 平台有哪些好的开源游戏项目？ - Android 开发请问有适合小团队磨练 Android 开发技术的开源项目或网站推荐吗？ - Android 开发GitHub 上都有哪些值得关注学习的 Android项目？ - 编程Android平台有哪些开源的社交APP可供研究？ - Android 开发有哪些 Android 的开源界面库？ - Android 开发Github上有哪些适合新人围观的Android项目？ - Java大家推荐个好的android开源项目学习下，里面项目包结构合理? - Android 开发请问Android有什么快速开发的类库，插件，工具吗？ - Android 开发你遇到过哪些代码优雅的安卓项目? - Android                              ======================================                                          为知乎这项用心良苦的设计感到悲哀                             ======================================
+
+
+-------------------------answer 3 via  -------------------------
+
+
+看到另一个同学的回答中提到很多开源项目，深以为然。不过github上已经有人对android知名开源项目做出了解析，良心之作！链接奉上：https://github.com/android-cn/android-open-project-analysis
+
+
+-------------------------answer 4 via  -------------------------
+
+
+Android学习之路Android学习之路别人整理的几个框架值得推荐的android开源框架别人整理的一些Android项目https://github.com/Trinea/android-open-projectandroid最佳实践：futurice/android-best-practices · GitHub
+
+
+-------------------------answer 5 via  -------------------------
+
+
+关注我的微信公众号吧，可能里面有你想要的！
+
+
+-------------------------answer 6 via  -------------------------
+
+
+开源项目很多，问题的关键是你要有兴趣，要有求知欲。。基于上面的原因，你才会去上google ,发现上不了，你会去翻墙，买VPN ，然后你才能上android的开发者官网，然后就能上youtube 去看google i/o的视频 ，你就会发现越来越多的项目，然后你的英文也会越来越熟练 ，然后你就会发现你已经喜欢上了 ，你就不会再来问哪里有开源项目了，还是那二点。
+
+
+-------------------------answer 7 via  -------------------------
+
+
+Tangyingqi/ReadProgress · GitHub我也是Android初学者，自己做的一个小app，有问题可以找我一起讨论。----更新上面的App比较简单，但是代码有点乱。下面是我最近做的，也不太难，适合新手。毕竟我也自学没多长时间，乐于回答问题，不懂的找我一起讨论。Tangyingqi/Jiemian · GitHub这是一个新闻客户端，利用Jsoup解析获取网页数据，可以参考然后做你自己想要的客户端。
+
+
+-------------------------answer 8 via  -------------------------
+
+
+推荐一下自己写的一个项目，注释是中文的，入门的话可以参考一下。https://github.com/sues-lee/SuesNews
+
+
+-------------------------answer 9 via  -------------------------
+
+
+终于能回答这个问题了。。欢迎Star、Fork、下载我的项目。GitHub - DanteAndroid/Knowledge: A MD project with MVP framework.

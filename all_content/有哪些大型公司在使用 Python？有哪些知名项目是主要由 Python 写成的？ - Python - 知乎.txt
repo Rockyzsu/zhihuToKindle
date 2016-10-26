@@ -1,0 +1,78 @@
+
+
+
+有哪些大型公司在使用 Python？有哪些知名项目是主要由 Python 写成的？ - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/19555512 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+列举一些比较有名的网站或应用。这其中有一些是用python进行开发，有一些在部分业务或功能上使用到了python，还有的是支持python作为扩展脚本语言。数据大部分来自Wikepedia和Quora。Reddit - 社交分享网站，最早用Lisp开发，在2005年转为pythonDropbox - 文件分享服务豆瓣网 - 图书、唱片、电影等文化产品的资料数据库网站Django - 鼓励快速开发的Web应用框架Fabric - 用于管理成百上千台Linux主机的程序库EVE - 网络游戏EVE大量使用Python进行开发Blender - 以C与Python开发的开源3D绘图软件BitTorrent - bt下载软件客户端Ubuntu Software Center - Ubuntu 9.10版本后自带的图形化包管理器YUM - 用于RPM兼容的Linux系统上的包管理器Civilization IV - 游戏《文明4》Battlefield 2 - 游戏《战地2》Google - 谷歌在很多项目中用python作为网络应用的后端，如Google Groups、Gmail、Google Maps等，Google App Engine支持python作为开发语言NASA - 美国宇航局，从1994年起把python作为主要开发语言Industrial Light & Magic - 工业光魔，乔治·卢卡斯创立的电影特效公司Yahoo! Groups - 雅虎推出的群组交流平台YouTube - 视频分享网站，在某些功能上使用到pythonCinema 4D - 一套整合3D模型、动画与绘图的高级三维绘图软件，以其高速的运算和强大的渲染插件著称Autodesk Maya - 3D建模软件，支持python作为脚本语言gedit - Linux平台的文本编辑器GIMP - Linux平台的图像处理软件Minecraft: Pi Edition - 游戏《Minecraft》的树莓派版本MySQL Workbench - 可视化数据库管理工具Digg - 社交新闻分享网站Mozilla - 为支持和领导开源的Mozilla项目而设立的一个非营利组织Quora - 社交问答网站Path - 私密社交应用Pinterest - 图片社交分享网站SlideShare - 幻灯片存储、展示、分享的网站Yelp - 美国商户点评网站Slide - 社交游戏/应用开发公司，被谷歌收购更多案例可以去python官网上About > Success Stories里查看：http://www.python.org/about/success/
+
+
+-------------------------answer 1 via  -------------------------
+
+
+目前腾讯的测试语言貌似统一为python，所以学习phthon还是很有用的
+
+
+-------------------------answer 2 via  -------------------------
+
+
+ 首先有个疑问是怎样的公司算是大型公司？据我所知，国内的话，网易，腾讯，搜狐，金山，豆瓣这些属于比较出名的用Python。大型的项目的话，网易的许多游戏，腾讯的某些网站，搜狐的邮箱，金山的测试框架等等都是或多或少使用了Python。国外的话Google自然是最经典的了，GAE就是用Python的最好的例子了。 
+
+
+-------------------------answer 3 via  -------------------------
+
+
+ 补充下：Youtube, Quora, bit.ly, 豆瓣，BitTorrent, 大型多人在线网游EVE使用python写脚本，还有很多。另外，国内很多Social Game公司使用Python进行开发。Python作为通用型高级语言，能做的事情非常多。很多公司使用Python，并不一定仅限于构建网络服务，还包括数据分析处理，系统维护等。 
+
+
+-------------------------answer 4 via  -------------------------
+
+
+竟然没人提Open StackHome » OpenStack Open Source Cloud Computing Software
+
+
+-------------------------answer 5 via  -------------------------
+
+
+py可能在工程中的粘合作用很好，处理事务用到某些功能根本不用看公司的代码库，只要对效率要求不高，直接用第三方开源的库就行了。作小软件，exe打包太大，大软件应该很少纯一种语言开发的吧，py也没什么优势
+
+
+-------------------------answer 6 via  -------------------------
+
+
+后端 自动化测试 文件管理 较为普遍……
+
+
+-------------------------answer 7 via  -------------------------
+
+
+IDA pro 难道不知道还有个idapython吗，呵呵
+
+
+-------------------------answer 8 via  -------------------------
+
+
+可以到这个网站去看看，有你想要东西:http://simple-is-better/sites
+
+
+-------------------------answer 9 via  -------------------------
+
+
+SurveyMonkey

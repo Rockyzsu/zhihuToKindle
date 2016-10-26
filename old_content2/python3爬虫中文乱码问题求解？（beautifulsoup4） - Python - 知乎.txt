@@ -1,0 +1,61 @@
+
+
+
+python3爬虫中文乱码问题求解？（beautifulsoup4） - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/39432369 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+可能只是输出控制台的问题。import sysreload(sys)sys.setdefaultencoding('gbk')添加上面语句试试
+
+
+-------------------------answer 0 via  -------------------------
+
+
+可能只是输出控制台的问题。import sysreload(sys)sys.setdefaultencoding('gbk')添加上面语句试试
+
+
+-------------------------answer 1 via  -------------------------
+
+
+python 3  完全正常啊没有管你的采集电话号码的代码，只测试了 中文编码
+
+
+-------------------------answer 2 via  -------------------------
+
+
+谢邀首先纠正题主，Python用的是解释器，不是编译器。我使用题主的代码后跟题主出现一样的问题，原因和解决方法如下BeautifulSoup用法不对BeautifulSoup() 第一个位置参数的类型应该是字符串类型或文本文件句柄，第二个位置参数是可选的，用来选择Beautifulsoup 使用什么样的解析器，个人建议使用这个参数。而变量response的类型是 http.client.HTTPResponse所以应该使用这个对象的read()方法，但还是有问题，read()返回的是bytes类型，不是字符串，所以要使用decode()方法，得知网页编码为utf8，所以代码如下。html = response.read().decode('utf8',errors='replace')然后把html变量传入Beautifulsoup()就没问题了:soup = BeautifulSoup(html)不过这样使用的是python自带的解析器，建议使用 lxml（这个包需要额外装）：soup = BeautifulSoup(html,'lxml')我学识浅薄，欢迎和平指正。所以我也不知道为什么 @黄哥 是正常的，MAC和Windows 导致的差异?
+
+
+-------------------------answer 3 via  -------------------------
+
+
+首先，解析出网页中的charset，得到网页的编码，然后转成utf8。如果还有问题，说明charset和html本身的编码不匹配，可以使用chardetect库来探测编码，然后再转成utf8。
+
+
+-------------------------answer 4 via  -------------------------
+
+
+我认为是解析网页的时候网页编码的问题显式地指定收到的网页编码为‘utf-8’或者自己转换一下就好了urllib这个库基本没用过，推荐requests这个库，相当好用import requests
+url="http://www.starbaby.cn/zhinan/609987"
+req =requests.get(url)
+req.encoding='utf-8' #显式地指定网页编码，一般情况可以不用
+print(req.text)
+一般情况下，requests这个库能默认正确解析编码的，但这个网站被默认用‘ISO-8859-1’解析了，大概就是这么回事，但为什么会这样，并不清楚# 测试用的python版本：3.4.4，requests版本：2.9.1
+
+
+-------------------------answer 5 via  -------------------------
+
+
+可以在首行添加 #coding:utf-8

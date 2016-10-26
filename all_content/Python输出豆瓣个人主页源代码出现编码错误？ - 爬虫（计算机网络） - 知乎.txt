@@ -1,0 +1,66 @@
+
+
+
+Python输出豆瓣个人主页源代码出现编码错误？ - 爬虫（计算机网络） - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/36717858 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+小弟最近在学Python，试着获取网页源码并输出。目标网页：宋乐天用浏览器查看网页源码，编码是utf-8：<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+代码如下，Python 版本是3.5：import urllib.request
+
+url = r'http://www.douban.com/people/songlet/' # 宋乐天的主页
+response = urllib.request.urlopen(url)
+html = response.read().decode('utf-8')
+print(html)
+命令行运行后，错误提示如下：Traceback (most recent call last):
+  File "F:\PythonWorkspace\Douban-Album-Download\t.py", line 6, in <module>
+    print(html)
+UnicodeEncodeError: 'gbk' codec can't encode character '\u30fb' in position 50763: illegal multibyte sequence
+把print(html)注释掉就不会报错，不知道是哪里不对
+
+-------------------------answer 0 via  -------------------------
+
+
+py3里的str类型都是utf8，你用的是windows，终端是gbk的，print的时候会将utf8解码输出。但是utf8覆盖全unicode集，而gbk只能覆盖部分unicode字符集，而页面里有不能编码为gbk（也就是gbk中不包含）的utf8字符，因此encode失败。\u30fb如果没记错，应该是个全角的中间位置的小圆点。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+自问自答一下，总算找到解决办法了。原理如 @Coldwings 所述。解决方法是在输出的时候转码为gbk，舍弃不存在的字符。 Python 3 可用：print(message.encode("gbk", errors = "ignore").decode("gbk"))
+当然也可以选择直接存入文件，然后打开文件查看
+
+
+-------------------------answer 2 via  -------------------------
+
+
+应该是你的print输出的字符出错了。 换成其他的格式就行了。 一般搞爬虫的都会遇到这个问题。
+
+
+-------------------------answer 3 via  -------------------------
+
+
+这个问题我遇到过。。在终端下切换字符集可以 chcp 65001
+
+
+-------------------------answer 4 via  -------------------------
+
+
+import sysreload(sys)sys.setdefaultencoding('utf-8')
+
+
+-------------------------answer 5 via  -------------------------
+
+
+你好，非常感谢你自己的回复。我也碰到一样的问题，是twitter的网页，但是print是编码错误，按照你说的print(x.encode("gbk",error="ignore")).decode("gbk"))确实能打印了，但是很无奈的是明明有17万行，它只打印了最后1800多行。按理解岂不是前面17万多都有不能编码成gbk的utf-8码，然后既然这样，我想问一下，如果我只是read的话，不print他，那能read到所有17万行源代码吗？如果看到，请您指教，确实着急，谢谢

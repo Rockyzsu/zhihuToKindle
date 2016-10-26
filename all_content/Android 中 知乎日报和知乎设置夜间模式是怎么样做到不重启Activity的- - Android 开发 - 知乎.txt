@@ -1,0 +1,116 @@
+
+
+
+Android 中 知乎日报和知乎设置夜间模式是怎么样做到不重启Activity的? - Android 开发 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/31145990 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+RT我猜的是直接通过广播重新设置所有控件的颜色和背景?但这样岂不是太不优雅了?
+
+-------------------------answer 0 via  -------------------------
+
+
+其实上面几个人回答的都不错，我再稍微补充一下：从下面的图来看，一个onClick事件就完成了切换主题的功能，说明并没有重启Activity，也没有用setTheme这么古板的方法，那么其实就很简单了，换个颜色即可！说白了白天模式和夜间模式，就是配色不一样，那么最简单的方法就是为每一个控件设置不同的颜色，白天模式显示这个颜色，夜间模式显示那个颜色。基于上面的认识，我想大家其实也基本知道如何实现这货了。鉴于只贴上面那张图有点敷衍，我们来仔细看一下，将其中的过程和逻辑都大概讲一下，话说举一反三嘛，学会了这个，以后碰到什么别的技术问题，想不通对方是如何实现的，打个Trace一看，也就八九不离十了。那么我们开始吧：1. 保存主题模式从上面的图可以看到，点击切换主题之后，首先会将当前的值存起来，这样全局范围都可以使用到这个值，存储介质自然就是SharedPreferences了。从上面的图可以看到，点击切换主题之后，首先会将当前的值存起来，这样全局范围都可以使用到这个值，存储介质自然就是SharedPreferences了。我们将上面那张图再放大一点：可以看到，Android处理SharedPreferences其实就是打开一个xml文件，把对应的值写进去。当然你看代码也可以看出来：可以看到，Android处理SharedPreferences其实就是打开一个xml文件，把对应的值写进去。当然你看代码也可以看出来：private void writeToFile(SharedPreferencesImpl.MemoryCommitResult mcr) {
+
+    ......
+
+    try {
+        FileOutputStream e = createFileOutputStream(this.mFile);
+        if(e == null) {
+            mcr.setDiskWriteResult(false);
+            return;
+        }
+
+        XmlUtils.writeMapXml(mcr.mapToWriteToDisk, e);
+        FileUtils.sync(e);
+        e.close();
+        ContextImpl.setFilePermissionsFromMode(this.mFile.getPath(), this.mMode, 0);
+
+        try {
+            StructStat e1 = Libcore.os.stat(this.mFile.getPath());
+            synchronized(this) {
+                this.mStatTimestamp = e1.st_mtime;
+                this.mStatSize = e1.st_size;
+            }
+        } catch (ErrnoException var7) {
+            ;
+        }
+
+        this.mBackupFile.delete();
+        mcr.setDiskWriteResult(true);
+        return;
+    } catch (XmlPullParserException var8) {
+        Log.w("SharedPreferencesImpl", "writeToFile: Got exception:", var8);
+    } catch (IOException var9) {
+        Log.w("SharedPreferencesImpl", "writeToFile: Got exception:", var9);
+    }
+
+    if(this.mFile.exists() && !this.mFile.delete()) {
+        Log.e("SharedPreferencesImpl", "Couldn\'t clean up partially-written file " + this.mFile);
+    }
+
+    mcr.setDiskWriteResult(false);
+}
+不好意思一个激动贴了点代码，然而并没有什么卵用。2. Build Cache可以看到，接下来是调用了View的buildDrawingCache()方法。可以看到，接下来是调用了View的buildDrawingCache()方法。buildDrawingCache的代码如下：（&（×@ ×&&）（×（……×…… 不好意思这次忍住了没贴代码，buildDrawingCache简单来说就是将当前的View用一张Bitmap Cache起来。然后又调用了getDrawingChche()public Bitmap getDrawingCache() {
+    return getDrawingCache(false);
+}
+返回了之前我们Cache起来的Bitmap。话说上面buildDrawingCache和getDrawingChche是为了做什么呢？我们下面再说3 设置StatusBar的颜色知乎客户端在变色的时候，同时也改变了StatusBar的颜色，下面就是改变StatusBar颜色的代码4. 设置ActionBar的颜色StatusBar变完色就该ActionBar了。虽然混淆了，但是下面的我们还是可以看出来的嘛～。～虽然混淆了，但是下面的我们还是可以看出来的嘛～。～5. 内容变色知乎的代码做了混淆，所以看上去就是一堆a/b之类的东西。不过也可以看到几个知乎自己定义的View在设置自己的Theme,setTheme并非大家想的那样，我猜想是知乎的大神们自己写的setTheme，从下面的图中可以看到，就是设置了自定义控件的背景色。不过也可以看到几个知乎自己定义的View在设置自己的Theme,setTheme并非大家想的那样，我猜想是知乎的大神们自己写的setTheme，从下面的图中可以看到，就是设置了自定义控件的背景色。6. 做Alpha动画6.1 第六步回忆录：这时候我们之前提到的Cache起来的那张Bitmap就用得上了，其实在getDrawingChche之后还有一些操作，当时没有列出来（第二步之后的一些操作）： 具体就是先创建一个Bitmap对象，再初始化一个View（全屏目测是），然后把这个View的Background设置为刚刚创建的Bitmap对象。具体就是先创建一个Bitmap对象，再初始化一个View（全屏目测是），然后把这个View的Background设置为刚刚创建的Bitmap对象。然后将这个View添加到屏幕上：这样做之后，我们看到的就是这个View了，这样给人的视觉效果就是屏幕没啥变化，其实多了一个View。这样做之后，我们看到的就是这个View了，这样给人的视觉效果就是屏幕没啥变化，其实多了一个View。接下来就走第三步了，开始各个部位的变色，但是这时候其实我们是看不到的，等第三步，第四步，第五部都完成了之后，让这个View做Alpha动画即可。6.2 第六步正文：Alpha动画开始：7 大功告成最后吐槽一下知乎客户端的过度绘制问题：update at 2015-6-18有人提到内存问题， 其实知乎处理的蛮好的：每一个尖角都是我点击切换主题按钮的时刻，内存飙高后迅速回落。干得漂亮～。～每一个尖角都是我点击切换主题按钮的时刻，内存飙高后迅速回落。干得漂亮～。～鉴于申请了一个专栏，就把这篇文章贴过去了：知乎Android客户端不重启Activity设置夜间模式实现分析 - Android Tips - 知乎专栏
+
+
+-------------------------answer 1 via  -------------------------
+
+
+使用EventBus在需要改变UI的地方订阅事件，然后做改变即可。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+无邀自答，只需要读取保存好的配置文件
+
+
+-------------------------answer 3 via  -------------------------
+
+
+没装知乎日报，说下知乎客户端。在主界面的侧滑菜单中点击切换主题，会发现改变的地方并不多。背景色变了（包括侧滑菜单、ListView、导航栏）文字的颜色变了（包括ListView里面的文字）其他图标都没变点击切换主题后应该在Preference中会更改一个主题的设置上面这些变化不需要重启Activity就可以完成当你点击某一条进入一个新Activity，这个Activity就可以读取Preference中的主题（日、夜）来设置自己的配色。
+
+
+-------------------------answer 4 via  -------------------------
+
+
+谢邀，知乎日报主题切换应该是通过代码实现的，在屏幕上显示的区域始终只有那么大，切换主题时只需要更改当前显示区域的颜色就可以了，当某个事件触发应用切换到其它界面时，程序只需要通过读取保存在配置中的主题颜色，设置界面的颜色就可以了。
+
+
+-------------------------answer 5 via  -------------------------
+
+
+用观察者模式可以做到，每个ACTIVITY实现JAVA自带的OBSERVER接口，机制类似于事件总线。
+
+
+-------------------------answer 6 via  -------------------------
+
+
+关于白天黑夜主题的切换，在Android Support Library 23.2 引入 DayNight theme 之后已经可以实现自动切换了。Android Support Library 23.2
+
+
+-------------------------answer 7 via  -------------------------
+
+
+变动相关view的颜色。日间一套颜色，夜间一套颜色。切换的button方法在ui线程里面。
+
+
+-------------------------answer 8 via  -------------------------
+
+
+主题不一定是用android的theme做的

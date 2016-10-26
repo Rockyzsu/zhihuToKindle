@@ -1,0 +1,146 @@
+
+
+
+如何用 C++ 在 10 行内写出八皇后？ - C++ - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/28543312 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+去一家小的电商公司面试后台程序员职位，待遇15k。问题开始都比较简单，直到最后出现极品问题，让人欲哭无泪。让我用c++在10行内写出八皇后。我真的很想走人算了，但是又觉得可以搞定，最后居然没搞出来。一个傻b的电商公司，有必要问八皇后吗？真把自己当google吗？对了，面试时还给了瓶维他命水，真没心思喝。补充：知乎影响力不是盖的，该公司老板@子飞 已来，大家散了吧。学习了很多，继续努力找工作去了。
+
+-------------------------answer 0 via  -------------------------
+
+
+既然有人邀请我了，我就来了，解法参考 如何简化求解八妃问题的代码？ - 知乎用户的回答#include <iostream>
+#include <algorithm>
+#include <bitset>
+#include <numeric>
+#include <utility>
+int main() {
+  for (int queens[] = {0,1,2,3,4,5,6,7}; ::std::next_permutation(queens,queens+8); )
+    if ((::std::bitset<15>(::std::accumulate(queens,queens+8, ::std::make_pair(0, 0), [](::std::pair<int, int> a, int b){return ::std::make_pair((1<<(b+a.second))|a.first,a.second+1);}).first).count() == 8) && (::std::bitset<15>(::std::accumulate(queens, queens+8, ::std::make_pair(0, 0), [](::std::pair<int, int> a, int b){return ::std::make_pair((1<<(7+b-a.second))|a.first, a.second+1);}).first).count() == 8))
+      ::std::cout << queens[0] << queens[1] << queens[2] << queens[3] << queens[4] << queens[5] << queens[6] << queens[7] << ::std::endl;
+}
+算上include，刚好十行，充分运用了C++标准库你们这些连include都没的，也好意思贴上来么？现在问题来了，15K 的工作在哪里？----------------------------------------------------------------------------更新J语言 49字符(i.(([:*./"1[:(#=+/@:~:)"1(+,:-)"1)#])i.@:!A.i.)8
+
+
+
+-------------------------answer 1 via  -------------------------
+
+
+用 C 实现，只有一行一个语句，连空格 173 个字符：main(a,l,r,m,i,j,k){return a?printf("%d",main(0,0,0,0,0,0,8)):j?i?main(0,l,r,m,i&i-1,1,k)+main(0,(l|i&-i)*2,(r|i&-i)/2,m|i&-i,0,0,k-1):0:k?main(0,l,r,m,~(l|r|m)&255,1,k):1;}
+编译执行：$ gcc -w -include stdio.h a.c && ./a.out
+92
+这个解答从 @Comzyh 的 回答 压缩，只是把迭代改成递归，以及用main()作为递归函数。----更新1：评论 @雾雨魔理沙 说到标准是不容许 main() 递归的，我再给一个标准一点的，两个语句，连空格 154 个字符：q(l,r,m,i,j,k){return j?i?q(l,r,m,i&i-1,1,k)+q((l|i&-i)*2,(r|i&-i)/2,m|i&-i,0,0,k-1):0:k?q(l,r,m,~(l|r|m)&255,1,k):1;}main(){printf("%d",q(0,0,0,0,0,8));}
+放不进一条 tweet。----更新2：去掉 k，147 个字符：q(l,r,m,i,j){return j?i?q(l,r,m,i&i-1,1)+q((l|i&-i)*2,(r|i&-i)/2,m|i&-i,0,0):0:m==255?1:q(l,r,m,~(l|r|m)&255,1);}main(){printf("%d",q(0,0,0,0,0));}
+改為 n-queen，函数本身 117个字符，再加上打印 n=1...15（额外 61 个字符）：q(l,r,m,n,i,j){return j?i?q(l,r,m,n,i&i-1,1)+q((l|i&-i)*2,(r|i&-i)/2,m|i&-i,n,0,0):0:m==n?1:q(l,r,m,n,~(l|r|m)&n,1);}
+main(n){for(n=0;n++<15;)printf("%d ",q(0,0,0,(1<<n)-1,0,0));}
+输出1 0 0 2 10 4 40 92 352 724 2680 14200 73712 365596 2279184
+答案符合 A000170 - OEIS。----更新3：一行或 10 行都不好看，来个 20 行的。           q
+     (l,r,m,n,i,j)
+        {return
+        j?i?q(l,
+         r,m,n,
+      i&i-1,1)+q((
+       l|i&-i)*2
+        ,(r|i&-
+         i)/2,
+        m|i&-i,
+        n,0,0):
+         0:m==
+         n?1:q
+         (l,r,
+         m,n,~
+        (l|r|m)
+      &n,1);}main
+     (n){for(n=0;n
+  ++<15;)printf("%d "
+,q(0,0,0,(1<<n)-1,0,0));}
+--更新4: 把 m==n?a:b 改成 m-n?b:a，省一个字符，116个字符：q(l,r,m,n,i,j){return j?i?q(l,r,m,n,i&i-1,1)+q((l|i&-i)*2,(r|i&-i)/2,m|i&-i,n,0,0):0:m-n?q(l,r,m,n,~(l|r|m)&n,1):1;}
+main(n){for(n=0;n++<15;)printf("%d ",q(0,0,0,(1<<n)-1,0,0));}
+.
+
+
+-------------------------answer 2 via  -------------------------
+
+
+谢喵~#include <iostream>
+int sum,ans[8];
+int solve(int n, long long mark, int *ans){
+	for (int i=n>8?++sum&0:0; n>8&&i<8; i!=7?std::cout << ans[i++] << " " : std::cout << ans[i++] << std::endl);
+	for (int i=0; i<8; !(mark>>i&1)&&!(mark>>(n+i+7)&1)&&!(mark>>(n-i+30)&1)?solve(n+(ans[n-1]=i+1)-i, mark|1ll<<i|1ll<<(n+i+7)|1ll<<(n-i+30), ans):0,i++);
+	return sum;
+}
+int main(){
+	std::cout << solve(1, 0, ans) << std::endl;
+}
+正好10行呢输出八皇后的所有方案和方案总数,这样就完整了,直接输出92是不是在抖机灵呢?使用位运算来简化行列攻击判断,mark的1-8位为列判断,9-23与24-38位为对角线判断.//另:没有main的,没有include的,不能直接运行的应该不是严格符合题意吧.那这么说我solve函数也只有5行呢... (逃
+
+
+-------------------------answer 3 via  -------------------------
+
+
+比行数有意思？Python大法好from itertools import *
+cols = range(8)
+for vec in permutations(cols):
+    if (8 == len(set(vec[i]+i for i in cols))
+          == len(set(vec[i]-i for i in cols))):
+        print vec
+C++的话，随随便便就超过了，不过如果可以，呵呵...#include<iostream>
+using namespace std;int position[8];bool isSafe(int queen_number, int row_position) {for (int i = 0; i < queen_number; i++) {int other_row_pos = position[i];if (other_row_pos == row_position ||other_row_pos == row_position - (queen_number - i) ||other_row_pos == row_position + (queen_number - i))return false;}return true;}void solve(int k){if (k == 8){for (int i = 0; i < 8; i++)cout << position[i] << " ";cout << endl;}else{for (int i = 0; i < 8; i++){if (isSafe(k, i)){position[k] = i;solve(k + 1);}}}}int main(){
+solve(0);return 0;}
+使用了心形在线生成网站:ImageChef - Visual Poetry for Facebook or Email Greetings（娱乐贴）
+
+
+-------------------------answer 4 via  -------------------------
+
+
+我觉的题主是来秀优越的！像 @vczh，面试都没拿到过维他命水好伐！
+
+
+-------------------------answer 5 via  -------------------------
+
+
+这是要输出一个可行解还是所有解的个数？如果是个数的话，之前在quora上看到大神解答。#include <iostream>int main() { std::cout << 92 << std::endl ; return 0;}
+
+
+-------------------------answer 6 via  -------------------------
+
+
+位运算简介及实用技巧（三）：进阶篇(2)Matrix67大牛写的 人肉翻译成C++就好了.
+
+
+-------------------------answer 7 via  -------------------------
+
+
+昨晚有朋友把这个问题在微信上直接发给我，说知乎上在吐槽你公司的面试，我赶忙注册来回答。其实任何面试都不能完全考察一个人的能力。如果面试没表现好，不要为你自己担心，因为你总会找到更好的地方展示自己。我在美国UT-Austin念研究生的时候，暑假要找实习工作，去西雅图微软面试，被问到过八皇后问题。记得是2007年，面试官很nice。屋子里面有一个小黑板，很快黑板就被我写满了，但是代码还没写完。我犹豫是否要把代码擦掉重新写。面试官说，就这样结束吧，你知道用递归就很好了。显然，我没拿到offer。我后来反思了很久，修正了自我，终于搞定了5-6个offer，最后去了Google。八皇后是上编程第一堂课就接触的，为啥搞不定呢？我反思后的自我修正是：代码一定要够简练，否则很难把它在短时间内清晰地呈现给别人。我后来发现大多数算法题目，核心代码都不超过20行。如果你能用简练的代码解决问题，你的面试官一般都是被你秒杀的。简洁的代码，意味着很多。有次我去Goldman Sachs，面试官给我了两个算法题目二选一。他出去冲咖啡，回来时我把两个题目都写完了。当然，我据掉了GS，因为我后来决定回国创业了。对于面试问题“用c++在10行内写出八皇后”，我期待是这样的：第一，这个问题有很多细节没有说，所以要clarify问题。那么就是向面试官发问，比如：8皇后的解怎么输出？我会告诉你，我们只要求输出解的个数，其实，我们想要的是n皇后，对于任意一个n的值，我们要求输出解的个数。n=1,输出1; n=2, 输出0; ...; n=8，输出92; ...其次，确定什么样的代码算一行？为什么要规定10行？我会说10行只是一个指导性的目标，真实的目的是希望代码简单明了。我们希望花更少的时间读懂你的代码。在工作中也是如此，你的队员希望你的代码简练明了，一看就懂，最好没有坑。如果非要算行数，那么单独的“｛”是不用计算的，因为信息量很小。当然了，能不能做出来不是最重要的。面试者如何approach这个问题很重要。这个帖子里面的很多回复都很牛x，拜读了之后感觉我大中华人才济济。希望大家不介意我打个小广告：本公司含我在内目前只有2名程序猿，需要大量的人才加入。公司的千万级投资已在年前全部到位，欢迎大家来公司面试顺带拿维他命水喝。最后，有人说不贴代码都是耍流氓，所以也贴出我以前写的代码，还请大家轻点拍砖（得到n皇后的解及其个数，分别是iterative和recursive两种方法）：
+
+
+-------------------------answer 8 via  -------------------------
+
+
+n皇后（1<=n<=10）问题的通用行数，9行解决。///////////////////////////////////////////////////////////////////////////////////////////////*n皇后问题1<=n<=10Count=QUEENNUM*QUEENNUM-1；Num=QUEENNUM;Attack=0;*/#define QUEENNUM 2int NQueen( int Count,int Num,__int64 Attack ){    __int64 ONE=1;    if( (Num==0) || ( Count==-1) ) return (Num==0)?1:0;    __int64 CulAttack= (ONE<<(Count/QUEENNUM) ) | ((ONE<<((Count%QUEENNUM))+QUEENNUM)) | (ONE<<(QUEENNUM*2+(QUEENNUM+Count%QUEENNUM-Count/QUEENNUM))) | (ONE<<(QUEENNUM*4+(Count/QUEENNUM+Count%QUEENNUM)));    if( ((CulAttack&Attack)!=0)  )  return NQueen(Count-1,Num,Attack);    return NQueen(Count-1,Num,Attack)+NQueen(Count-1,Num-1,Attack|CulAttack);     }//////////////////////////////////////////////////////////////////////////////////////////////如果仅需解决8皇后问题，那就更简单了int EightQueen(){return 92;}//////////////////////////////////////////////////////////////////////////////////////////////程序说明-- 如果纠结于皇后之间不能互相攻击，10行内是搞不定的，必须转换问题对n皇后问题定义1： 建立(n+2)*(n+2)的棋盘，其中最外围成为壁，共有4*（n+1）个节点，称为壁节点定义2： 每个皇后定义4种攻击方式：-- | \ / (横线，竖线，左斜线，右斜线)。定理1： 每个皇后对壁节点攻击8次，每一种攻击各两次。推论：情况1： 任意两个皇后之间不能相互攻击情况2： 任意一个壁节点最多承受4次方式不同攻击当棋盘中存在n个皇后时，情况1 为 情况2 的充分必要条件。结论：仅需要判断每个壁节点的攻击方式不重复即可。优化：由于每个皇后攻击的壁节点对称，因此每种攻击仅需一半的攻击节点。--    n|     n\     2*n/    2*n程序思想：1. 将n*n的棋盘编号，0 -- n*n-12. 判断，当皇后处于位置i时，其4种攻击方式所攻击的壁节点编号3. 若某壁节点已经被攻击，则皇后不得处于该位置4. 若无壁节点被重复攻击，则皇后可能处于该位置5. 采用bit位标注，最大为64bit，因此该函数最多能够解决到10皇后问题//////////////////////////////////////////////////////////////////////////////////////////////感谢：1. 题主的问题，若不存在这一限制，不会这么想，还是挺有意思的。2. @vczh 的代码提供了灵感。
+
+
+-------------------------answer 9 via  -------------------------
+
+
+有维他命水还有什么不满足，google都是叫人6点起床大老远跑google去，拖到中午才给你面试，还没水的。显然没有把自己当google。google是我人生中见到的唯一一个，会把一整天要面试的人，都让你早上到公司然后慢慢等的，简直不把来面试的当人看。随便写了一个，不保证对，刚好8行。被人提醒了好像没考虑斜线，反正原理差不多，不想写了……int 八皇后(uint64_t current = 0, uint64_t remains = 8, uint64_t rows = 0, uint64_t columns = 0) {
+    if (remains == 0) if (rows == 0x0101010101010101UL && columns == 0x0101010101010101UL)
+        return 1;
+    if (current == 64) return 0;
+    uint64_t newRows  = rows | 1 << (current % 8 * 8);
+    uint64_t newColumns = columns | 1 << (current / 8 * 8);
+    return 八皇后(current+1, remains-1, newRows, newColumns) + 八皇后(current+1, remains, rows, columns);   
+}
+

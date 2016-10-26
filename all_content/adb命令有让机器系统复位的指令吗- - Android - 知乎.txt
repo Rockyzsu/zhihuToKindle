@@ -1,0 +1,39 @@
+
+
+
+adb命令有让机器系统复位的指令吗? - Android - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/21934001 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+cmd下adb命令里让系统复位的代码是什么,谢谢.
+
+-------------------------answer 0 via  -------------------------
+
+
+fastboot -w
+也可以是fastboot erase userdata
+fastboot erase cache
+两个一起用
+
+
+-------------------------answer 1 via  -------------------------
+
+
+据我所知，adb没有，只能使用fastboot erase userdata或者fastboot oem unlock或者调用系统的factory reset的api函数
+
+
+-------------------------answer 2 via  -------------------------
+
+
+Android刷机常用adb指令集合 常用的指令大全这里都有。你可以自己自行操作看看，adb指令很全面的。当然小白就不建议搞了。

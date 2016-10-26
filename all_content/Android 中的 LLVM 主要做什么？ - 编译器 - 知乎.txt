@@ -1,0 +1,48 @@
+
+
+
+Android 中的 LLVM 主要做什么？ - 编译器 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/26646049 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+前面的答案里提到ART与LLVM的都是被hype荼毒的人呐。前面答案说RenderScript和NDK的是正解。但是ART的就不算太正解了。这是关于Android toolchain与NDK的部分的文档：Beginning with the Jellybean MR1 release, Google has included LLVM as an alternative compiler as part of the Android toolchain and the Android NDK. LLVM is suitable wherever you use native code (C/C++) in your Android application.这是介绍RenderScript与LLVM关系的一个演示稿：http://llvm.org/devmtg/2011-11/Hines_AndroidRenderscript.pdf至于ART（Android Runtime），虽然在Kitkat放出的源码里其编译器的两个后端（Quick和Portable）中Portable后端基于LLVM来实现，但我还没见过谁用Kitkat-release的源码启用ART_USE_PORTABLE_COMPILER之后还能让ART正常运行的；大多做了这个尝试的人都败了，在编译时特别慢，而在运行时会遇到segfault。这个后端根本还是半成品。实际大家在Kitkat上用的ART都不是用Portable后端，而是用Quick后端。这个编译器源自Dalvik VM的JIT编译器，被大幅魔改成了method-based AOT编译器。而AOSP里最新的ART源码里已经彻底删除了整个Portable后端（以及另一个使用LLVM的后端“Sea IR”），包括里面的LLVM源码。请参考这个change：956af0f0cb05422e38c1d22cbef309d16b8a1a12 "Remove portable." - platform/art - Git at Google（及其review）到此为止ART已经跟LLVM彻底没关系。以后请别再忽悠新手说ART就是借助LLVM实现AOT编译了——之前不是，现在更不是。至于为啥ART会删除了所有基于LLVM的后端，主要是公司内政治斗争+LLVM的编译速度实在慢…- 为啥ART会删除了所有基于LLVM的后端? - Android Runtime （ART）话说后来ART自身也可以用Clang来构建了。这个很重要。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+最早是用作RenderScript的编译。RS是个C的子集，很多计算密集的任务可以用RS实现。APP通过框架自动产生的JNI来和RS交互。之后构建系统支持作为一个GCC的代替。还可以做sanitizer, 用来检查源代码的问题。另外，LLVM的语法检查更严格。再后来，和ART又扯上了关系。G家也是LLVM社区的一大贡献者。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+LLVM,全称为Low Level Virtual Machine,其实它就是底层编译框架，其执行效率要比Gcc等以速度快见长的编译器要快上很多。Google将它用于Android中也是因为它超高的效率。现在Android因为开始采用ART，所以用它做预编译(AOT)，从而提高了程序的执行效率，其代价就是需要更大的空间，安装时间的增加。因此，LLVM现在基本上参与了Android应用的的编译工作，而在ART之前，Android3.0之后，LLVM主要用来进行3D渲染（RenderScript）。以上。
+
+
+-------------------------answer 3 via  -------------------------
+
+
+更新了一下GPU的渲染脚本用它来做编译器。ART里面有文件名叫LLVM，实现逻辑也相似，但是和预编译好的LLVM也没啥关系。你就当是战略部署吧。（20150104：关于这一段已经过时，请参考 @RednaxelaFX 的答案。）以前认为Chrome OS将会支持Android 的app，然后ART会有2个“backend”，一个是对功耗比较敏感的移动版的quick，一个会是对有更多优化的LLVM。但现在看来我的想法有问题。因为apple那边是LLVM的主力，似乎google并不期望LLVM一统天下？
+
+
+-------------------------answer 4 via  -------------------------
+
+
+在Android系统上主要就是两个作用1 RenderScript的编译，RenderScript是搞密集计算用的2 编译OAT文件，为了满足一套binary文件不同设备分发，Android在安装应用时，会将应用分发时使用的设备无关的DEX格式文件（Dalvik）在目标机器上重新编译成设备相关的OAT格式文件（ART）

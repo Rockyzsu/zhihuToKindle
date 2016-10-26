@@ -1,0 +1,76 @@
+
+
+
+c语言里的char大小到底是4还是1？ - C（编程语言） - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/28104169 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+下面的代码#include <stdio.h>
+
+int main()
+{
+    char *s = "hello";
+    printf("sizeof char is %lu, sizeof char* is %lu, sizeof 'a' is %lu\n",
+        sizeof(char), sizeof(char*), sizeof('a'));
+    printf("sizeof s is %lu\n", sizeof(*s+0));
+    printf("sizeof s is %lu\n", sizeof(*s));
+    return 0;
+}
+使用gcc4.4.6编译，运行的结果是sizeof char is 1, sizeof char* is 8, sizeof 'a' is 4
+sizeof s is 4
+sizeof s is 1
+各位大牛们，能不能解释下呢
+
+-------------------------answer 0 via  -------------------------
+
+
+首先，sizeof(char)一定是1。c99标准里面对sizeof是这么定义的：6.5.3.4  The sizeof operatorWhen applied to an operand that has type char, unsigned char, or signed char, (or a qualiﬁed version thereof) the result is 1. When applied to an operand that has array type, the result is the total number of bytes in the array.) When applied to an operand that has structure or union type, the result is the total number of bytes in such an object, including internal and trailing padding.另外，其实在char的定义里面其实是没有规定一个char为一个byte的，只是要求large enough：6.2.5  TypesAn  object  declared  as  type char is  large  enough  to  store  any member  of  the  basic execution character set. If a member of the basic execution character set is stored in a char object, its value is guaranteed to be positive. If any other character is stored in a char object, the resulting value is implementation-deﬁned but shall be within the range of values that can be represented in that type.所以，sizeof的结果其实告诉我们的是：多少个char，而不是多少个byte。但是，如果结合sizeof后半段关于array和struct都用了bytes，所以，唯一合理的解释就是：一个char就是一个byte。（我个人估计标准委员会那帮家伙写晕头了？）然后，sizeof('a')一定是sizeof(int)。6.4.4.4  Character constantsAn integer character constant is a sequence of one or more multibyte characters enclosed in single-quotes, as in 'x'.An integer character constant has type int. 接着，再解释一下sizeof(*s+0)。这其实是发生了算数提升：6.3.1  Arithmetic operandsThe following may be used in an expression wherever an int or unsigned int may be used:— An object or expression with an integer type whose integer conversion rank is lessthan the rank of int and unsigned int.也就是，小于int的整形（char也是），在运算中会提升为int运算，那结果自然也是int了。最后，再解释一下byte和bit的关系：3.61 byteaddressable unit of data storage large enough to hold any member of the basic character set of the execution environment2 NOTE 1 It is possible to express the address of each individual byte of an object uniquely.3 NOTE 2 A byte is composed of a contiguous sequence of bits, the number of which is implementation-deﬁned.  The least signiﬁcant bit is called the low-order bit; the most signiﬁcant bit is called the high-order bit.但是这个实现相关也不是天马行空的，至少规定了下限：large enough to hold any member of the basic character set而在5.2.1的定义，basic character set有95个：26*2的大小写字母，10个数字、29个符号、4个特殊字符，那也就是起码要7个bit。再结合6.2.5中char的定义，必须要求是正数，那就要再加一个符号位： If a member of the basic execution character set is stored in a char object, its value is guaranteed to be positive那也就是说，1个byte起码要8个bit。也就是说，理论上可能会出现1byte=9bit的系统，但是不可能出现1byte=7bit的系统。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+为什么 C 语言中的一些特性不被 C++ 支持？ - 陈硕的回答
+
+
+-------------------------answer 2 via  -------------------------
+
+
+C语言里，'a'是被当做int常量的，所以sizeof('a')是4。*s是char，但是0是int，这两个相加的话char被隐式转换(谢谢指出，应为提升)成int了，所以和是int。sizeof(char)总是1，不管多少bit……
+
+
+-------------------------answer 3 via  -------------------------
+
+
+char是一个byte，至于一个byte是多少个bit，这要看CPU
+
+
+-------------------------answer 4 via  -------------------------
+
+
+    char *s = "hello";
+    printf("sizeof char is %lu, sizeof char* is %lu, sizeof 'a' is %lu\n",
+        sizeof(char), sizeof(char*), sizeof('a')); 
+ //char 字符大小 1byte char* 指针 64位的机子为 8byte  ‘a’为int 4byte
+    printf("sizeof s is %lu\n", sizeof(*s+0)); 
+//*s为数组第一个，'h' +0 转化为 int 4byte
+    printf("sizeof s is %lu\n", sizeof(*s));
+//*s 数组第一个元素 ’h‘  1byte
+
+
+
+-------------------------answer 5 via  -------------------------
+
+
+楼主，一般为8位。

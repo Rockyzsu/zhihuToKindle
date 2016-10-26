@@ -1,0 +1,24 @@
+
+
+
+python StringIO的问题？ - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/39377414 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+>>> import StringIO, cStringIO, sys>>> s = StringIO.StringIO("JGood is a handsome boy")>>> s.write("JGood is a handsome boy \r\n")>>> print s.read()结果竟然为空，为啥呢。请高手指教。python版本为2.7.10 操作系统windows 10 64位。
+
+-------------------------answer 0 via  -------------------------
+
+
+你忘了用  s.seek(0) 将输出坐标定位到0>>> import StringIO, cStringIO, sys>>> s = StringIO.StringIO("JGood is a handsome boy")>>> s.write("JGood is a handsome boy \r\n") >>>s.seek(0)>>> print s.read()

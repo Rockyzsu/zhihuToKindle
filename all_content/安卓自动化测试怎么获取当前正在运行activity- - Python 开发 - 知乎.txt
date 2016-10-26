@@ -1,0 +1,24 @@
+
+
+
+安卓自动化测试怎么获取当前正在运行activity? - Python 开发 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/39224010 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+打开apk，进入你需要抓取的activity，执行：adb shell dumpsys window | grep mCurrentFocus返回结果：（例如打开了Google的Chrome）mCurrentFocus=Window{15145d93 u0 com.android.chrome/com.google.android.apps.chrome.ChromeTabbedActivity}这里面的com.android.chrome就是需要的包名，com.google.android.apps.chrome.ChromeTabbedActivity就是需要的activity；

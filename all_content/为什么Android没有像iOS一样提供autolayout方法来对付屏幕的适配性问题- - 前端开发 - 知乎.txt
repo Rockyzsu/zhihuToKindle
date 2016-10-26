@@ -1,0 +1,78 @@
+
+
+
+为什么Android没有像iOS一样提供autolayout方法来对付屏幕的适配性问题? - 前端开发 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/26507298 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+和Android的屏幕适配来比autoLayout简直弱爆了好么？Android中的RelativeLayout, layout_weight属性，dp/sp单位，mdpi/hdpi/xdpi等一系列文件夹，提供了各种手段解决适配问题，小到Android Wear，大到Android TV都可以完美适配…
+
+
+-------------------------answer 1 via  -------------------------
+
+
+因为n年前google就有了比autoLayout更好的方案++。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+你听说过RelativeLayout么？还有用来适应不同像素密度的dp/sp这些单位？
+
+
+-------------------------answer 3 via  -------------------------
+
+
+你说啥？
+
+
+-------------------------answer 4 via  -------------------------
+
+
+autolayout有个蛋学习曲线..就一条直线..
+
+
+-------------------------answer 5 via  -------------------------
+
+
+你个流氓，对，说得就是你，题主！
+
+
+-------------------------answer 6 via  -------------------------
+
+
+Android哭晕在厕所。题主还是去看看Android Developer上关于Layout的知识吧。
+
+
+-------------------------answer 7 via  -------------------------
+
+
+Android 的 RelativeLayout 和 LinearLayout , dp  各种文件夹,  draw9patch, 都是适配的利器. 关键还是得做得多有想法去做适配才能做得好啊
+
+
+-------------------------answer 8 via  -------------------------
+
+
+你看这个：如果你还很好奇的话，可以看看这个Supporting Multiple Screens：http://developer.android.com/guide/practices/screens_support.html
+
+
+-------------------------answer 9 via  -------------------------
+
+
+题主，你就不能先了解下Android再问么？你看看把小伙伴们乐的。一句话，Android适配只要一个xml文件就搞定了

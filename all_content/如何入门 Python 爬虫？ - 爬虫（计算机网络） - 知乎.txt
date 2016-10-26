@@ -1,0 +1,455 @@
+
+
+
+如何入门 Python 爬虫？ - 爬虫（计算机网络） - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/20899988 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+“入门”是良好的动机，但是可能作用缓慢。如果你手里或者脑子里有一个项目，那么实践起来你会被目标驱动，而不会像学习模块一样慢慢学习。另外如果说知识体系里的每一个知识点是图里的点，依赖关系是边的话，那么这个图一定不是一个有向无环图。因为学习A的经验可以帮助你学习B。因此，你不需要学习怎么样“入门”，因为这样的“入门”点根本不存在！你需要学习的是怎么样做一个比较大的东西，在这个过程中，你会很快地学会需要学会的东西的。当然，你可以争论说需要先懂python，不然怎么学会python做爬虫呢？但是事实上，你完全可以在做这个爬虫的过程中学习python :D看到前面很多答案都讲的“术”——用什么软件怎么爬，那我就讲讲“道”和“术”吧——爬虫怎么工作以及怎么在python实现。先长话短说summarize一下：你需要学习基本的爬虫工作原理基本的http抓取工具，scrapyBloom Filter: Bloom Filters by Example如果需要大规模网页抓取，你需要学习分布式爬虫的概念。其实没那么玄乎，你只要学会怎样维护一个所有集群机器能够有效分享的分布式队列就好。最简单的实现是python-rq: https://github.com/nvie/rqrq和Scrapy的结合：darkrho/scrapy-redis · GitHub后续处理，网页析取(grangier/python-goose · GitHub)，存储(Mongodb)以下是短话长说：说说当初写的一个集群爬下整个豆瓣的经验吧。1）首先你要明白爬虫怎样工作。想象你是一只蜘蛛，现在你被放到了互联“网”上。那么，你需要把所有的网页都看一遍。怎么办呢？没问题呀，你就随便从某个地方开始，比如说人民日报的首页，这个叫initial pages，用$表示吧。在人民日报的首页，你看到那个页面引向的各种链接。于是你很开心地从爬到了“国内新闻”那个页面。太好了，这样你就已经爬完了俩页面（首页和国内新闻）！暂且不用管爬下来的页面怎么处理的，你就想象你把这个页面完完整整抄成了个html放到了你身上。突然你发现， 在国内新闻这个页面上，有一个链接链回“首页”。作为一只聪明的蜘蛛，你肯定知道你不用爬回去的吧，因为你已经看过了啊。所以，你需要用你的脑子，存下你已经看过的页面地址。这样，每次看到一个可能需要爬的新链接，你就先查查你脑子里是不是已经去过这个页面地址。如果去过，那就别去了。好的，理论上如果所有的页面可以从initial page达到的话，那么可以证明你一定可以爬完所有的网页。那么在python里怎么实现呢？很简单import Queue
+
+initial_page = "http://www.renminribao.com"
+
+url_queue = Queue.Queue()
+seen = set()
+
+seen.insert(initial_page)
+url_queue.put(initial_page)
+
+while(True): #一直进行直到海枯石烂
+    if url_queue.size()>0:
+        current_url = url_queue.get()    #拿出队例中第一个的url
+        store(current_url)               #把这个url代表的网页存储好
+        for next_url in extract_urls(current_url): #提取把这个url里链向的url
+            if next_url not in seen:      
+                seen.put(next_url)
+                url_queue.put(next_url)
+    else:
+        break
+写得已经很伪代码了。所有的爬虫的backbone都在这里，下面分析一下为什么爬虫事实上是个非常复杂的东西——搜索引擎公司通常有一整个团队来维护和开发。2）效率如果你直接加工一下上面的代码直接运行的话，你需要一整年才能爬下整个豆瓣的内容。更别说Google这样的搜索引擎需要爬下全网的内容了。问题出在哪呢？需要爬的网页实在太多太多了，而上面的代码太慢太慢了。设想全网有N个网站，那么分析一下判重的复杂度就是N*log(N)，因为所有网页要遍历一次，而每次判重用set的话需要log(N)的复杂度。OK，OK，我知道python的set实现是hash——不过这样还是太慢了，至少内存使用效率不高。通常的判重做法是怎样呢？Bloom Filter. 简单讲它仍然是一种hash的方法，但是它的特点是，它可以使用固定的内存（不随url的数量而增长）以O(1)的效率判定url是否已经在set中。可惜天下没有白吃的午餐，它的唯一问题在于，如果这个url不在set中，BF可以100%确定这个url没有看过。但是如果这个url在set中，它会告诉你：这个url应该已经出现过，不过我有2%的不确定性。注意这里的不确定性在你分配的内存足够大的时候，可以变得很小很少。一个简单的教程:Bloom Filters by Example注意到这个特点，url如果被看过，那么可能以小概率重复看一看（没关系，多看看不会累死）。但是如果没被看过，一定会被看一下（这个很重要，不然我们就要漏掉一些网页了！）。 [IMPORTANT: 此段有问题，请暂时略过]好，现在已经接近处理判重最快的方法了。另外一个瓶颈——你只有一台机器。不管你的带宽有多大，只要你的机器下载网页的速度是瓶颈的话，那么你只有加快这个速度。用一台机子不够的话——用很多台吧！当然，我们假设每台机子都已经进了最大的效率——使用多线程（python的话，多进程吧）。3）集群化抓取爬取豆瓣的时候，我总共用了100多台机器昼夜不停地运行了一个月。想象如果只用一台机子你就得运行100个月了...那么，假设你现在有100台机器可以用，怎么用python实现一个分布式的爬取算法呢？我们把这100台中的99台运算能力较小的机器叫作slave，另外一台较大的机器叫作master，那么回顾上面代码中的url_queue，如果我们能把这个queue放到这台master机器上，所有的slave都可以通过网络跟master联通，每当一个slave完成下载一个网页，就向master请求一个新的网页来抓取。而每次slave新抓到一个网页，就把这个网页上所有的链接送到master的queue里去。同样，bloom filter也放到master上，但是现在master只发送确定没有被访问过的url给slave。Bloom Filter放到master的内存里，而被访问过的url放到运行在master上的Redis里，这样保证所有操作都是O(1)。（至少平摊是O(1)，Redis的访问效率见:LINSERT – Redis)考虑如何用python实现：在各台slave上装好scrapy，那么各台机子就变成了一台有抓取能力的slave，在master上装好Redis和rq用作分布式队列。代码于是写成#slave.py
+
+current_url = request_from_master()
+to_send = []
+for next_url in extract_urls(current_url):
+    to_send.append(next_url)
+
+store(current_url);
+send_to_master(to_send)
+
+#master.py
+distributed_queue = DistributedQueue()
+bf = BloomFilter()
+
+initial_pages = "www.renmingribao.com"
+
+while(True):
+    if request == 'GET':
+        if distributed_queue.size()>0:
+            send(distributed_queue.get())
+        else:
+            break
+    elif request == 'POST':
+        bf.put(request.url)
+        
+好的，其实你能想到，有人已经给你写好了你需要的：darkrho/scrapy-redis · GitHub4）展望及后处理虽然上面用很多“简单”，但是真正要实现一个商业规模可用的爬虫并不是一件容易的事。上面的代码用来爬一个整体的网站几乎没有太大的问题。但是如果附加上你需要这些后续处理，比如有效地存储（数据库应该怎样安排）有效地判重（这里指网页判重，咱可不想把人民日报和抄袭它的大民日报都爬一遍）有效地信息抽取（比如怎么样抽取出网页上所有的地址抽取出来，“朝阳区奋进路中华道”），搜索引擎通常不需要存储所有的信息，比如图片我存来干嘛...及时更新（预测这个网页多久会更新一次）如你所想，这里每一个点都可以供很多研究者十数年的研究。虽然如此，“路漫漫其修远兮,吾将上下而求索”。所以，不要问怎么入门，直接上路就好了：）
+
+
+-------------------------answer 1 via  -------------------------
+
+
+呃本来只是想给题主一个传送，因为本身也是一个Python爱好者。简单介绍一下我的那个入门教程，其实根本算不上教程，基本上算是一个学习的笔记，很多内容都是从网上整理然后自己实践得到的结果。如果说深入学习爬虫，还是建议那本《自己动手写网络爬虫》，是我的启蒙教程，语法是Java的，但是思路是相通的。Python爬虫的学习，最主要的是多摸索，多试验（哪个不是这样）。先从最简单的例子做起，比如爬取百度主页，爬取百度图片，然后正则，巴拉巴拉。我的学习笔记可以作为一个参考的索引，里面很多东西没有深入探讨，因为毕竟当时我也只是一个小菜（现在也差不多）。给初学者一个入门的途径，接下来的路还是要自己走^_^至于匿名、个人习惯潜水。继续匿了。------------------------------------------以前写过一个爬虫入门的系列，传送：专栏：Python爬虫入门教程一共12篇：[Python]网络爬虫（一）：抓取网页的含义和URL基本构成[Python]网络爬虫（二）：利用urllib2通过指定的URL抓取网页内容[Python]网络爬虫（三）：异常的处理和HTTP状态码的分类[Python]网络爬虫（四）：Opener与Handler的介绍和实例应用[Python]网络爬虫（五）：urllib2的使用细节与抓站技巧[Python]网络爬虫（六）：一个简单的百度贴吧的小爬虫[Python]网络爬虫（七）：Python中的正则表达式教程[Python]网络爬虫（八）：糗事百科的网络爬虫（v0.2）源码及解析[Python]网络爬虫（九）：百度贴吧的网络爬虫（v0.4）源码及解析[Python]网络爬虫（十）：一个爬虫的诞生全过程（以山东大学绩点运算为例）[Python]网络爬虫（11）：亮剑！爬虫框架小抓抓Scrapy闪亮登场！[Python]网络爬虫（12）：爬虫框架Scrapy的第一个爬虫示例入门教程比较入门，不过多接触一些小demo没有坏处哈
+
+
+-------------------------answer 2 via  -------------------------
+
+
+以下是我学python爬虫的打怪升级之路，过程充满艰辛，也充满欢乐，虽然还未打倒大boss，但一路的风景就是最大的乐趣，不是么？希望大家能get到想要的东西！多图预警！以下奉献一段爬取知乎头像的代码import requestsimport urllibimport reimport randomfrom time import sleepdef main():    url='知乎 - 与世界分享你的知识、经验和见解'    #感觉这个话题下面美女多    headers={省略}    i=1    for x in xrange(20,3600,20):        data={'start':'0','offset':str(x),'_xsrf':'a128464ef225a69348cef94c38f4e428'}        #知乎用offset控制加载的个数，每次响应加载20        content=requests.post(url,headers=headers,data=data,timeout=10).text        #用post提交form data        imgs=re.findall('<img src=\\\\\"(.*?)_m.jpg',content)          #在爬下来的json上用正则提取图片地址，去掉_m为大图          for img in imgs:            try:                img=img.replace('\\','')                #去掉\字符这个干扰成分                pic=img+'.jpg'                path='d:\\bs4\\zhihu\\jpg\\'+str(i)+'.jpg'                #声明存储地址及图片名称                urllib.urlretrieve(pic,path)                #下载图片                print u'下载了第'+str(i)+u'张图片'                i+=1                sleep(random.uniform(0.5,1))                #睡眠函数用于防止爬取过快被封IP            except:                print u'抓漏1张'                pass        sleep(random.uniform(0.5,1))if __name__=='__main__':    main() 结果：最后，请关注我吧，我会好好维护你的时间线的  ＼( ^▽^ )／ 
+
+
+-------------------------answer 3 via  -------------------------
+
+
+——————最重要的话写在前面——————0、新手/喜欢练习/欢迎交流/邀请/我是看着这个问题下面的答案学习的1、带着一个目的来学爬虫。#我的目的实现了…所以我来写这个回答了。2、不要怂就是干！系统学习固然好，直接写一个项目出来效果更加简单粗暴！（不过自己现在的水平写出来都是流水一般的面向过程的代码，代码的重复部分太多，正在回过头去学习面向对象编程，学习类和方法的使用。不过我还是坚定地认为入门的时候应该直接简单粗暴地实践一个项目）3、哪里不会搜哪里！哪里报错改哪里！相信我你遇到的99%的问题都能从网上找到相似的问题，你需要做的就是写代码！搜问题！调BUG！你搜不到解决办法的情况下，80%的情况是你搜索的姿势不对，另外20%可能需要你自己动动脑子，换个思路去做。举个印象最深的例子。我在统计知乎回答voters的具体情况的时候（后面会介绍）发现知乎的数据是这样发送的。http://www.zhihu.com/answer/15219795/voters_profile?total=70&offset=10&follows=wAp13IyyllRUgyux1Zp3MSGySe4GNnw-AG6-yDt_MO68ywzyjX_TGN3o什么鬼（摔）。等到我辛辛苦苦用正则把里面的信息提出来的时候发现我得到的数据是这样的…我的内心是崩溃的……问题很明显是编码问题……用户那一列全部是unicode编码……转成中文就好了嘛……我刚开始也是这么想的…当我尝试了各种encode和decode…以后整个人都不好了。大概是这样的。我用Shell演示一下…应该能看懂。但是我的字符串是自动获取的啊，怎么可能挨着用 u' '赋值……于是我开始了漫长的搜索之路……在看了无数篇重复度高于百分之80的关于编码的文章后，在我都快要放弃的时候…看到了这个…水木社区-源于清华的高知社群 你能理解我当时内心的酸爽吗…大概就是这样。所以我遇到的问题已经很奇葩了依然还是有解决办法的嘛。Windows下面编码各种混乱，系统编码，编程时编辑器的编码，抓取网页以后网页的编码，Python2的编码，Python3的编码……新人真的很容易搞昏头。例子不多言了。后面还有很多。——————正文1：我的爬虫入门，不谈学习，只聊项目（代码已贴）——————前面说到学爬虫需要一个目标。那我的目标是什么呢？听我慢慢讲。前些日子我回答了一个问题高考后暑假应该做什么事？ - 生活 我回答这个问题的时候呢关注人数也就才刚刚过百，我的赞数也涨的很慢…可是突然有一天呢，我发现突然就出现了一个300赞的回答…当时那个问题的关注似乎还不到300。我百思不得其解…但是我看了看那个回答的赞同和答主的主页。大概是这样的：然后我隐隐觉得…可能会是刷赞？当然我们不能恶意地去揣测别人，要拿数据说话，毕竟知乎现在的三零真实用户还是蛮多的，不一定都是水军的小号。于是我一个从来没有学过爬虫的人就开始学爬虫了…然而并不一帆风顺。首先是知乎显示“等人赞同”的方式做了修改，参见如何评价知乎新的「某某等人赞同」显示方式？ - 如何评价 X。其次我刚开始的时候不会维持登陆…每次抓到的数据里都有很多的“知乎用户”（也就是未登录状态下抓取不成功）。为了行文的连贯我跳过中间学习时做的几个小爬虫…直接放我做成功的结果吧。选取的样本回答依次为：@段晓晨高考后暑假应该做什么事？ - 段晓晨的回答@EdgeRunner高考后暑假应该做什么事？ - EdgeRunner 的回答@孔鲤高考后暑假应该做什么事？ - 孔鲤的回答@Emily L能利用爬虫技术做到哪些很酷很有趣很有用的事情？ - Emily L 的回答@chenqin为什么 2015 年初，上海有卫计委官员呼吁大家生二胎？ - chenqin 的回答感兴趣的可以下载数据getvoters.xls_免费高速下载getvoters2.xls_免费高速下载getvoters3.xls_免费高速下载getvoters4.xls_免费高速下载getvoters5.xls_免费高速下载结论就是……没有结论。话说我回答的那个三零用户比例也好高啊……我真的没有刷赞我保证！（话说我的赞里面要是有水军的话我会很伤心的……我一直以为是我写的好他们才赞我的QAQ）到这里第一个项目就结束了…这个我暂时不贴代码…代码不完善…还得有点小修改。两天内放上来。——来贴代码——loveQt/Zhihu_voters · GitHub使用前请填写config.ini文件，cookie不用填。依然不完善。是这样的，知乎在获取“等人赞同”的时候有一个很畸形的地方在于……答案的id很畸形。比如我现在这个答案。http://www.zhihu.com/question/20899988/answer/49749466当我点击“等人赞同”的时候。抓包得到请求地址。我用的是Firefox的Firebug这个地址是这样的：这个地址是这样的：http://www.zhihu.com/answer/15299264/voters_profile如果你继续往下拉，知乎会自动加载更多用户，你会得到形如这样的地址：http://www.zhihu.com/answer/15299264/voters_profile?total=143&offset=10&follows=YCPQ47_p62oaS49riUMu-4sTvAQfYpoe5E2RRX9lj40vWR6E4J5W_T-U分析这个地址的构成就会发现/answer/这里应该是这个回答的唯一id，而这个id显然与上面的/question/20899988/answer/49749466是不一样的，我抓了好多个回答，结论应该是没有规律的，知乎应该是给每个问题一个id，每个问题下面的回答一个id，但是只有点赞的时候这个回答才会得到它关于voters的id……所以我没办法实现完全的自动化…你如果想爬指定的回答，似乎得先手动抓包了 QAQ抓包的示意如上，打开网络面板，点击“等人赞同”，找到地址中的数字就可以了。如果你会抓包了请接着看下去。代码的下载地址在上面的github。Python版本为2.7，希望你们会用pip安装依赖的库。简单说几个方面。1、知乎的登陆。我模仿了 @egrcc 和 @7sDream 的项目，使用了requests.session。def login():
+    cf = ConfigParser.ConfigParser()
+    cf.read("config.ini")
+    cookies = cf._sections['cookies']
+
+    email = cf.get("info", "email")
+    password = cf.get("info", "password")
+    cookies = dict(cookies)
+    global s
+    s = requests.session()
+    login_data = {"email": email, "password": password}
+    header = {
+    'User-Agent': "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:34.0) Gecko/20100101 Firefox/34.0",
+    'Host': "www.zhihu.com",
+    'Referer': "http://www.zhihu.com/",
+    'X-Requested-With': "XMLHttpRequest"
+        }
+    r = s.post(Login_url, data=login_data, headers=header)
+在实现了登陆之后，只要使用s.get(url)得到的页面都是登陆成功的状态。//注意，不登陆或者登陆不成功的情况下也可以爬取数据。点赞、感谢、提问、回答的数值都能正常获取，但是会出现部分用户无法获取名称和用户地址，显示为“知乎用户”2、获取数据假如我们获取到了单页数据，那么使用正则可以很简单地获取到想要的数据，具体参见代码。我们需要做的，其实是获取那些需要爬取的URL。通过上面对于网址的分析我们可以发现，网址的组成为domain/answer/ans_id/voters_profile?total=xxx&offset=xx&...后面那堆乱码不重要，重要的是total和offset，每次会展示出10个用户的数据，所以我们只需要获取到点赞的总数total，就可以知道需要循环多少步（total/10），注意从是0开始，不然会漏掉前十个数据。而这也就是我在zhihu-vote.py中的做法。其余的部分就没有什么难度了，入门的同学应该都可以看懂。3、改进我们在zhihu-vote.py中通过构造地址的方法来，通过循环实现对所有voters_profile的遍历。但是如果我们了解json的知识的话，我们可以发现其实每个页面都是json格式的。其中最关键的地方在于next。我们会发现其实每个页面中都包含了下一页的地址！这样我们是不是可以让爬虫每爬一页自己找到一个地址，然后自己去爬下一页呢？可是这样做有一个问题，如何控制循环呢？假如我们去看最后一个页面的话，会发现是这样的。注意这里的next值为空。而我们知道（不知道的你现在知道了），空字符串在作为条件判断时相当于False 所以我写了zhihu-voteV2.py其中核心的改动是Vote_url = Zhihu + 'answer/' + ans_id +'/voters_profile'
+h = s.get(Vote_url)
+html = h.content.encode('utf-8')
+target = json.loads(html)
+while target['paging']['next']:
+    Vote_url = 'http://www.zhihu.com'+target['paging']['next']
+这样就实现了程序每次爬取页面时从页面中获取地址，而不是人为构造地址循环。下面是原来的做法。for num in range (0,page_num):
+    Vote_url = Zhihu + 'answer/' + ans_id +'/voters_profile?total='+str(total)+'&offset='+str(num)+'0'
+讲实话我不知道这两种写法哪种好，但我还是蛮高兴自己发现了第二种做法。于是我做了一个运行时间的测试…提车了，下一步需要做什么？ - 车海沉浮高永强的回答 16K的赞运行结果如下：构造地址的办法用时451秒，第二种办法用时251秒。……我不知道为什么方法二会比方法一快，可能是网速吧……QAQ。有了解的前辈还望告知原因…到这里也就结束了。最后的结果是写入excel的，有知友说让我去学习csv，已经在看了，不过这次还是用的让人又爱又恨的excel。按照惯例写To-dos：完善Github的文档说明想办法看能不能自动获取那个蛋疼的ans_id就不用每次都手动抓包了，selenium？我不会用啊TAT在点赞的页面我们只能得到用户的4个数据，也就是赞同、感谢、提问、回答，有些时候我们或许想知道他的关注人数和被关注人数…然而那个得到用户的页面中去爬取了。不过想通过用户URL得到用户的具体数据是有现成的轮子的……egrcc/zhihu-python · GitHub  （PY2） @egrcc 和7sDream/zhihu-py3 · GitHub（PY3） @7sDream 我想办法看怎么把我现在获取答案点赞用户信息的方法pull给他们…直接调用他们的User类就ok了~抓特别多的数据时考虑多线程和gzip…？接下来就要学这个了…会的话我就用了…还记得我去爬知乎赞数最高的答案…一个答案爬了30分钟…——更新完毕，大家学习愉快，共同进步————Windows 平台Py2编码问题畸形但有效解法——在..\Python27\Lib\site-packages\下新建sitecustomize.py添加代码import sys
+sys.setdefaultencoding("utf-8")
+——————正文2：学习路上顺便写的项目——————在学习路上写了许多类似test的小小项目，就不赘述了。下面贴出来三个还算有结果的。1、抓取知乎话题下面的问题，分析容易得赞的问题具体描述在 第一次在知乎获得 1000 以上的赞是什么体验？ - 段晓晨的回答 写过了。代码在知乎将如何应对「狗日的知乎」计划？ - 段晓晨的回答 里面有。需要用到7sDream/zhihu-py3 · GitHub2、写完1中项目以后。我爬取了爬虫话题分类下面的所有回答。结果爬虫话题所有问题_20150531.xls_免费高速下载然后我从其中挑选了“关注量/回答量”较大的问题（也就是有人关注但有效回答较少）写了以下两个回答，大家可以看看。如何使用  python  抓取  雪球网页？ - 段晓晨的回答如何用Python抓取写一个抓取新浪财经网指定企业年报的脚本？ - 段晓晨的回答——————结语：谈谈学习——————至此我能说的就说完了。鼓起勇气来回答这个问题，不知道自己有没有资格。毕竟自己也就才学了一周多一点。自认为还谈不上入门……因为不会的实在太多。系统学习爬虫的思路别人讲的肯定比我好。我的经验在开头已经说过了……不要怂就是干！哪里不会搜哪里！哪里报错改哪里！如果一定要再补充写什么，贴上我之前回复知友的评论吧。首先要带着一个目的去学，这个目的不能太复杂，不能一上来就搞那种需要模拟登陆，需要js动态实现的网站，那样你会在登陆那儿卡很久，又在js实现那儿卡很久，很容易挫伤学习积极性。比如我最初的目的就是爬知乎。知乎登陆/不登陆数据会有差别，比如抓不到某些人的数据，返回“知乎用户”这种。有了目的，你需要一些基础知识。html是什么，标签是什么，浏览器和服务器之间通信（比如抓包）。爬虫的原理就是要把网页的源码整个下载下来，然后去里面寻找我们需要的信息。所以首先你得能获取正确的网址，然后通过配置你的程序（Headers伪装浏览器，代理防止封ip等）来成功访问网页并获取源码。…………诸如此类的基础知识，其实特别简单。你可以去找一些爬百度贴吧，爬煎蛋，爬糗事百科的例子，很容易就会上手。有了源码你需要去里面寻找东西，比较简单的有正则表达式，更方便的有BeautifulSoup。对json解析有json。等等。最后你可能需要一些模块化的思想。比如我在写爬知乎问题的时候，写了一些代码来让它把输出的结果自动保存到excel里…那我是不是可以把写入excel这个行为单独抽出来，定义为一个方法。以后每次遇到需要excel的地方我就拿过来改一下就能用。同样的思路，登陆过程，post数据的过程，解析数据的过程，是不是都可以自己慢慢积累为模块。就好像你有了很多乐高积木，以后再做的时候就不需要做重复的事情，直接搭积木就好~最后感谢一下在我学习过程中参考过的别人的回答和博客。太多了无法一一列举。再次感谢。编程是最容易获得的超能力。你还在等什么？
+
+
+-------------------------answer 4 via  -------------------------
+
+
+啦啦啦，我就是来送福利得！在这里分享自己写的抓取淘宝MM照片的爬虫原文：Python爬虫实战四之抓取淘宝MM照片其实还有好多，大家可以看 Python爬虫学习系列教程福利啊福利，本次为大家带来的项目是抓取淘宝MM照片并保存起来，大家有没有很激动呢？本篇目标1.抓取淘宝MM的姓名，头像，年龄2.抓取每一个MM的资料简介以及写真图片3.把每一个MM的写真图片按照文件夹保存到本地4.熟悉文件保存的过程1.URL的格式在这里我们用到的URL是 http://mm.taobao.com/json/request_top_list.htm?page=1，问号前面是基地址，后面的参数page是代表第几页，可以随意更换地址。点击开之后，会发现有一些淘宝MM的简介，并附有超链接链接到个人详情页面。我们需要抓取本页面的头像地址，MM姓名，MM年龄，MM居住地，以及MM的个人详情页面地址。2.抓取简要信息相信大家经过上几次的实战，对抓取和提取页面的地址已经非常熟悉了，这里没有什么难度了，我们首先抓取本页面的MM详情页面地址，姓名，年龄等等的信息打印出来，直接贴代码如下__author__ = 'CQC'
+# -*- coding:utf-8 -*-
+ 
+import urllib
+import urllib2
+import re
+ 
+class Spider:
+ 
+    def __init__(self):
+        self.siteURL = 'http://mm.taobao.com/json/request_top_list.htm'
+ 
+    def getPage(self,pageIndex):
+        url = self.siteURL + "?page=" + str(pageIndex)
+        print url
+        request = urllib2.Request(url)
+        response = urllib2.urlopen(request)
+        return response.read().decode('gbk')
+ 
+    def getContents(self,pageIndex):
+        page = self.getPage(pageIndex)
+        pattern = re.compile('<div class="list-item".*?pic-word.*?<a href="(.*?)".*?<img src="(.*?)".*?<a class="lady-name.*?>(.*?)</a>.*?<strong>(.*?)</strong>.*?<span>(.*?)</span>',re.S)
+        items = re.findall(pattern,page)
+        for item in items:
+            print item[0],item[1],item[2],item[3],item[4]
+ 
+spider = Spider()
+spider.getContents(1)
+运行结果如下 2.文件写入简介 2.文件写入简介在这里，我们有写入图片和写入文本两种方式1）写入图片#传入图片地址，文件名，保存单张图片
+def saveImg(self,imageURL,fileName):
+     u = urllib.urlopen(imageURL)
+     data = u.read()
+     f = open(fileName, 'wb')
+     f.write(data)
+     f.close()
+2）写入文本def saveBrief(self,content,name):
+    fileName = name + "/" + name + ".txt"
+    f = open(fileName,"w+")
+    print u"正在偷偷保存她的个人信息为",fileName
+    f.write(content.encode('utf-8'))
+3）创建新目录#创建新目录
+def mkdir(self,path):
+    path = path.strip()
+    # 判断路径是否存在
+    # 存在     True
+    # 不存在   False
+    isExists=os.path.exists(path)
+    # 判断结果
+    if not isExists:
+        # 如果不存在则创建目录
+        # 创建目录操作函数
+        os.makedirs(path)
+        return True
+    else:
+        # 如果目录存在则不创建，并提示目录已存在
+        return False
+3.代码完善主要的知识点已经在前面都涉及到了，如果大家前面的章节都已经看了，完成这个爬虫不在话下，具体的详情在此不再赘述，直接帖代码啦。spider.py
+__author__ = 'CQC'
+# -*- coding:utf-8 -*-
+ 
+import urllib
+import urllib2
+import re
+import tool
+import os
+ 
+#抓取MM
+class Spider:
+ 
+    #页面初始化
+    def __init__(self):
+        self.siteURL = 'http://mm.taobao.com/json/request_top_list.htm'
+        self.tool = tool.Tool()
+ 
+    #获取索引页面的内容
+    def getPage(self,pageIndex):
+        url = self.siteURL + "?page=" + str(pageIndex)
+        request = urllib2.Request(url)
+        response = urllib2.urlopen(request)
+        return response.read().decode('gbk')
+ 
+    #获取索引界面所有MM的信息，list格式
+    def getContents(self,pageIndex):
+        page = self.getPage(pageIndex)
+        pattern = re.compile('<div class="list-item".*?pic-word.*?<a href="(.*?)".*?<img src="(.*?)".*?<a class="lady-name.*?>(.*?)</a>.*?<strong>(.*?)</strong>.*?<span>(.*?)</span>',re.S)
+        items = re.findall(pattern,page)
+        contents = []
+        for item in items:
+            contents.append([item[0],item[1],item[2],item[3],item[4]])
+        return contents
+ 
+    #获取MM个人详情页面
+    def getDetailPage(self,infoURL):
+        response = urllib2.urlopen(infoURL)
+        return response.read().decode('gbk')
+ 
+    #获取个人文字简介
+    def getBrief(self,page):
+        pattern = re.compile('<div class="mm-aixiu-content".*?>(.*?)<!--',re.S)
+        result = re.search(pattern,page)
+        return self.tool.replace(result.group(1))
+ 
+    #获取页面所有图片
+    def getAllImg(self,page):
+        pattern = re.compile('<div class="mm-aixiu-content".*?>(.*?)<!--',re.S)
+        #个人信息页面所有代码
+        content = re.search(pattern,page)
+        #从代码中提取图片
+        patternImg = re.compile('<img.*?src="(.*?)"',re.S)
+        images = re.findall(patternImg,content.group(1))
+        return images
+ 
+ 
+    #保存多张写真图片
+    def saveImgs(self,images,name):
+        number = 1
+        print u"发现",name,u"共有",len(images),u"张照片"
+        for imageURL in images:
+            splitPath = imageURL.split('.')
+            fTail = splitPath.pop()
+            if len(fTail) > 3:
+                fTail = "jpg"
+            fileName = name + "/" + str(number) + "." + fTail
+            self.saveImg(imageURL,fileName)
+            number += 1
+ 
+    # 保存头像
+    def saveIcon(self,iconURL,name):
+        splitPath = iconURL.split('.')
+        fTail = splitPath.pop()
+        fileName = name + "/icon." + fTail
+        self.saveImg(iconURL,fileName)
+ 
+    #保存个人简介
+    def saveBrief(self,content,name):
+        fileName = name + "/" + name + ".txt"
+        f = open(fileName,"w+")
+        print u"正在偷偷保存她的个人信息为",fileName
+        f.write(content.encode('utf-8'))
+ 
+ 
+    #传入图片地址，文件名，保存单张图片
+    def saveImg(self,imageURL,fileName):
+         u = urllib.urlopen(imageURL)
+         data = u.read()
+         f = open(fileName, 'wb')
+         f.write(data)
+         print u"正在悄悄保存她的一张图片为",fileName
+         f.close()
+ 
+    #创建新目录
+    def mkdir(self,path):
+        path = path.strip()
+        # 判断路径是否存在
+        # 存在     True
+        # 不存在   False
+        isExists=os.path.exists(path)
+        # 判断结果
+        if not isExists:
+            # 如果不存在则创建目录
+            print u"偷偷新建了名字叫做",path,u'的文件夹'
+            # 创建目录操作函数
+            os.makedirs(path)
+            return True
+        else:
+            # 如果目录存在则不创建，并提示目录已存在
+            print u"名为",path,'的文件夹已经创建成功'
+            return False
+ 
+    #将一页淘宝MM的信息保存起来
+    def savePageInfo(self,pageIndex):
+        #获取第一页淘宝MM列表
+        contents = self.getContents(pageIndex)
+        for item in contents:
+            #item[0]个人详情URL,item[1]头像URL,item[2]姓名,item[3]年龄,item[4]居住地
+            print u"发现一位模特,名字叫",item[2],u"芳龄",item[3],u",她在",item[4]
+            print u"正在偷偷地保存",item[2],"的信息"
+            print u"又意外地发现她的个人地址是",item[0]
+            #个人详情页面的URL
+            detailURL = item[0]
+            #得到个人详情页面代码
+            detailPage = self.getDetailPage(detailURL)
+            #获取个人简介
+            brief = self.getBrief(detailPage)
+            #获取所有图片列表
+            images = self.getAllImg(detailPage)
+            self.mkdir(item[2])
+            #保存个人简介
+            self.saveBrief(brief,item[2])
+            #保存头像
+            self.saveIcon(item[1],item[2])
+            #保存图片
+            self.saveImgs(images,item[2])
+ 
+    #传入起止页码，获取MM图片
+    def savePagesInfo(self,start,end):
+        for i in range(start,end+1):
+            print u"正在偷偷寻找第",i,u"个地方，看看MM们在不在"
+            self.savePageInfo(i)
+ 
+ 
+#传入起止页码即可，在此传入了2,10,表示抓取第2到10页的MM
+spider = Spider()
+spider.savePagesInfo(2,10)
+tool.py
+__author__ = 'CQC'
+#-*- coding:utf-8 -*-
+import re
+ 
+#处理页面标签类
+class Tool:
+    #去除img标签,1-7位空格,&nbsp;
+    removeImg = re.compile('<img.*?>| {1,7}|&nbsp;')
+    #删除超链接标签
+    removeAddr = re.compile('<a.*?>|</a>')
+    #把换行的标签换为\n
+    replaceLine = re.compile('<tr>|<div>|</div>|</p>')
+    #将表格制表<td>替换为\t
+    replaceTD= re.compile('<td>')
+    #将换行符或双换行符替换为\n
+    replaceBR = re.compile('<br><br>|<br>')
+    #将其余标签剔除
+    removeExtraTag = re.compile('<.*?>')
+    #将多行空行删除
+    removeNoneLine = re.compile('\n+')
+    def replace(self,x):
+        x = re.sub(self.removeImg,"",x)
+        x = re.sub(self.removeAddr,"",x)
+        x = re.sub(self.replaceLine,"\n",x)
+        x = re.sub(self.replaceTD,"\t",x)
+        x = re.sub(self.replaceBR,"\n",x)
+        x = re.sub(self.removeExtraTag,"",x)
+        x = re.sub(self.removeNoneLine,"\n",x)
+        #strip()将前后多余内容删除
+        return x.strip()
+以上两个文件就是所有的代码内容，运行一下试试看，那叫一个酸爽啊看看文件夹里面有什么变化不知不觉，海量的MM图片已经进入了你的电脑，还不快快去试试看！！代码均为本人所敲，写的不好，大神勿喷，写来方便自己，同时分享给大家参考！希望大家支持！送完福利走人！！推荐大家直接看原文：Python爬虫实战四之抓取淘宝MM照片还有更多：Python爬虫学习系列教程希望对大家有帮助哈，如果支持的话就点击下网站里的广告支持一下嘿嘿。
+
+
+-------------------------answer 5 via  -------------------------
+
+
+看了大部分回答不禁叹口气，主要是因为看到很多大牛在回答像“如何入门爬虫”这种问题的时候，一如当年学霸讲解题目，跳步无数，然后留下一句“不就是这样推嘛”，让一众小白菜鸟一脸懵逼。。作为一个0起步（之前连python都不会），目前总算掌握基础，开始向上进阶的菜鸟，深知其中的不易，所以我会在这个回答里，尽可能全面、细节地分享给大家从0学习爬虫的各种步骤，如果对你有帮助，请点赞~-------------------------------------------------------------------------------------------------#我要写爬虫！#Ver.1.2 #Based on: Python 2.7#Author:高野良#原创内容，转载请注明出处首先！你要对爬虫有个明确的认识，这里引用毛主席的思想：在战略上藐视：“所有网站皆可爬”：互联网的内容都是人写出来的，而且都是偷懒写出来的（不会第一页是a，下一页是8），所以肯定有规律，这就给人有了爬取的可能，可以说，天下没有不能爬的网站“框架不变”：网站不同，但是原理都类似，大部分爬虫都是从 发送请求——获得页面——解析页面——下载内容——储存内容 这样的流程来进行，只是用的工具不同在战术上重视：持之以恒，戒骄戒躁：对于初学入门，不可轻易自满，以为爬了一点内容就什么都会爬了，爬虫虽然是比较简单的技术，但是往深学也是没有止境的（比如搜索引擎等）！只有不断尝试，刻苦钻研才是王道！（为何有种小学作文即视感）                                ||                                ||                                V然后，你需要一个宏伟的目标，来让你有持续学习的动力（没有实操项目，真的很难有动力）我要爬整个豆瓣！...我要爬整个草榴社区！我要爬知乎各种妹子的联系方式*&^#%^$#                                ||                                ||                                V接着，你需要扪心自问一下，自己的python基本功吼不吼啊？吼啊！——OK，开始欢快地学习爬虫吧 ！不吼？你还需要学习一个！赶紧回去看廖雪峰老师的教程，2.7的。至少这些功能和语法你要有基本的掌握 ：list，dict：用来序列化你爬的东西切片：用来对爬取的内容进行分割，生成条件判断（if等）：用来解决爬虫过程中哪些要哪些不要的问题循环和迭代（for while ）：用来循环，重复爬虫动作文件读写操作：用来读取参数、保存爬下来的内容等                                ||                                ||                                V然后，你需要补充一下下面几个内容，作为你的知识储备：（注：这里并非要求“掌握”，下面讲的两点，只需要先了解，然后通过具体项目来不断实践，直到熟练掌握）1、网页的基本知识：基本的HTML语言知识（知道href等大学计算机一级内容即可）理解网站的发包和收包的概念（POST GET）稍微一点点的js知识，用于理解动态网页（当然如果本身就懂当然更好啦）2、一些分析语言，为接下来解析网页内容做准备NO.1  正则表达式：扛把子技术，总得会最基础的：NO.2  XPATH：高效的分析语言，表达清晰简单，掌握了以后基本可以不用正则参考：XPath 教程NO.3  Beautifulsoup：美丽汤模块解析网页神器,一款神器，如果不用一些爬虫框架（如后文讲到的scrapy），配合request，urllib等模块（后面会详细讲），可以编写各种小巧精干的爬虫脚本官网文档：Beautiful Soup 4.2.0 文档参考案例：                                ||                                ||                                V接着，你需要一些高效的工具来辅助（同样，这里先了解，到具体的项目的时候，再熟悉运用）NO.1   F12 开发者工具：看源代码：快速定位元素分析xpath：1、此处建议谷歌系浏览器,可以在源码界面直接右键看NO.2  抓包工具：推荐httpfox，火狐浏览器下的插件,比谷歌火狐系自带的F12工具都要好，可以方便查看网站收包发包的信息NO.3  XPATH CHECKER (火狐插件）：非常不错的xpath测试工具，但是有几个坑，都是个人踩过的，，在此告诫大家：     1、xpath checker生成的是绝对路径，遇到一些动态生成的图标（常见的有列表翻页按钮等），飘忽不定的绝对路径很有可能造成错误，所以这里建议在真正分析的时候，只是作为参考     2、记得把如下图xpath框里的“x:”去掉，貌似这个是早期版本xpath的语法，目前已经和一些模块不兼容（比如scrapy），还是删去避免报错NO.4  正则表达测试工具：在线正则表达式测试 ，拿来多练练手，也辅助分析！里面有很多现成的正则表达式可以用，也可以进行参考！                                ||                                ||                                Vok！这些你都基本有一些了解了，现在开始进入抓取时间，上各种模块吧！python的火，很大原因就是各种好用的模块，这些模块是居家旅行爬网站常备的——urlliburllib2requests                                ||                                ||                                V不想重复造轮子，有没有现成的框架？华丽丽的scrapy(这块我会重点讲，我的最爱）||||V遇到动态页面怎么办？selenium（会了这个配合scrapy无往不利，是居家旅行爬网站又一神器，下一版更新的时候会着重安利，因为这块貌似目前网上的教程还很少）||||V爬来的东西怎么用？pandas（基于numpy的数据分析模块，相信我，如果你不是专门搞TB级数据的，这个就够了）||||V然后是数据库，这里我认为开始并不需要非常深入，在需要的时候再学习即可mysqlmongodbsqllite遇到反爬虫策略验证码之类咋整？PILopencvpybrain||||V进阶技术多线程、分布式———————————— 乱入的分割线 —————————————然后学习编程关键的是学以致用，天天捧一本书看不如直接上手操练，下面我通过实际的例子来讲解爬虫——比如最近，楼主在豆瓣上认识了一个很可爱的妹子，发现她一直会更新签名和日志，所以没事就会去她主页看看，但一直没有互相加好友（作为一只高冷的天蝎，怎么可以轻易加好友嘛！而且加了好友，你更新什么都会收到推送，那多没意思啊！一点神秘感都没有了！），可还是想及时获得妹子的最新动态，怎么办？于是我就写了个70几行的python脚本，包含爬虫+邮件模块，跑在家里的一台闲置笔记本上，通过计划任务每准点抓取妹子的签名和最新文章一次，发送到我的邮箱。。嗯，其实是很简单的技术，，代码如下所示：于是我就写了个70几行的python脚本，包含爬虫+邮件模块，跑在家里的一台闲置笔记本上，通过计划任务每准点抓取妹子的签名和最新文章一次，发送到我的邮箱。。嗯，其实是很简单的技术，，代码如下所示：#-*-coding:utf-8-*- #编码声明，不要忘记！
+import requests  #这里使用requests，小脚本用它最合适！
+from lxml import html    #这里我们用lxml，也就是xpath的方法
+
+#豆瓣模拟登录，最简单的是cookie，会这个方法，80%的登录网站可以搞定
+cookie = {} 
+
+raw_cookies = ''#引号里面是你的cookie，用之前讲的抓包工具来获得
+
+for line in raw_cookies.split(';'):
+    key,value = line.split("=", 1)
+    cookie[key] = value #一些格式化操作，用来装载cookies
+
+#重点来了！用requests，装载cookies，请求网站
+page = requests.get('#妹纸的豆瓣主页#',cookies=cookie)
+
+#对获取到的page格式化操作，方便后面用XPath来解析
+tree = html.fromstring(page.text)
+
+#XPath解析，获得你要的文字段落！
+intro_raw = tree.xpath('//span[@id="intro_display"]/text()')
+
+#简单的转码工作，这步根据需要可以省略
+for i in intro_raw:
+    intro = i.encode('utf-8')
+
+print intro #妹子的签名就显示在屏幕上啦
+
+#接下来就是装载邮件模块，因为与本问题关联不大就不赘述啦~
+怎么样~是不是很简单~V1.2更新日志：
+修改了一些细节和内容顺序
+
+
+
+-------------------------answer 6 via  -------------------------
+
+
+其实写爬虫是一个很微小的事情， 在12年和14年，我却单靠这2个爬虫获得了offer，所以爬虫真的算Python工程师的必修课。这2个爬虫其实都很cute，现在看起来有很多地方其实理解的不够深入，也有一些实现地方做的不好，但是毕竟是当时的我，就保留着吧。其实拿到数据怎么用，比如做数据分析，做创业项目原始启动数据，数据可视化等等。那我就利用Web开发的优势，把数据在页面上展示出来吧。无图无真相，先上图：这是IPhone打开看到的：移动版的图有点糊，是因为使用了小尺寸的图片，担心太浪费读者的手机流量。移动版的图有点糊，是因为使用了小尺寸的图片，担心太浪费读者的手机流量。我刚爬了网易云音乐精彩评论， 其中包含了 28925 个歌手（组合）演唱的 710182 首歌曲中的 720699 条评论。它们都在这里 云音乐评论。我在用随机刷着玩的时候，看到了这么一条：AJAPKK：阿黛尔：你经历过绝望吗
+我就点进去听了下这首廖佳琳版本的Rolling in the deep，额那一天我单曲循环了一下午的这首神曲。建议一边听一边继续向下看。其次是发现最热的评论中薛之谦的歌曲占了好几个，好吧我得先承认，之前认为喜欢参与综艺节目的歌手歌唱的都不行，尤其薛之谦以段子手而著名。但是看到总榜之后，我还是挨个听了他的歌，觉得其实还行。在知乎，感觉没用过Python写爬虫都不好意思和人打招呼。我想写篇爬虫的文章，所以就开始找需求，其实一开始我是准备爬豆瓣害羞组（不懂得可以搜一搜），但是连续2个深夜2点去蹲守，发现现在那几个小组不够劲爆，而且量也太少，而且担心发了文章有人举报我 ~=(๑•́ ₃ •̀๑) ，所以作罢。上班的路上，除了看kindle，我也经常会带着耳机听网易云音乐（简称网云吧）里面收藏的歌，额，其实经常还能看到好多好玩的评论的，有辣眼睛的，有悲伤的，有总结很精辟的，有讲一些不是同年代人不会懂的。可以先预览下 网易云音乐有哪些有趣的评论？ 和 网易云音乐评论量最高的歌曲有哪些？在这些评论里你又发现了什么值得品味的故事？等不及了？ 它们都在这里 云音乐评论， 里面有 28925 个歌手（组合）演唱的 710182 首歌曲中的 720699 条精彩评论。这个项目地址是： GitHub - dongweiming/commentbox（fork时别忘记点赞哦 ）， 使用的技术：1. 后端： Flask + Mongoengine + Mako + requests + Redis + lxml + concurrent.futures2. 前端：React + Mobx + Fetch + Material-UI + ES6 + Webpack + Babel今天先和大家聊聊写个爬虫需要熟悉哪些知识，思路是什么，怎么实践的，欢迎关注专栏，节后我再聊后端和前端的实现， 也有使用Flask的经验。需求分析既然要爬整站的热门评论，就要找到「入口」。什么是入口呢？就是类似聚合页，比如抓知乎的全部问题和答案，我的思路是先爬 话题广场， 爬每个一级话题，再去爬话题下子话题，如 教育 - 热门问答 。 然后不断翻页就好了。由于一个问题可以有多个话题标签，需要注意缓存已爬取和正在爬取的答案页面地址，防止重复爬取。那网云呢？评论在歌曲下，歌曲在歌手下。找到全部歌手就好了。所以先爬 http://music.163.com/#/discover/artist， 找到规律，按照歌手所在地区和首字母翻就能遍历了。其次是预估最后的结果量。其实我这几十万的只是网云评论数据的一个小小小子集，主要是看爬取要花的时间，以及可提供存储的空间。对这个需求来说，有些歌曲都是几十万个评论，我用一台非闲置的服务器抓取，肯定一年也抓不完，不要忘记，抓取的瓶颈不在你使用多线程，多进程或者asyncio，主要在对方对你的抓取的容忍程度以及在爬和反爬策略伤的博弈的结果。而且我的VPS是1G内存，考虑爬取下来存入MongoDB的空间，并要给Redis预留缓存使用内存的使用量，所以我决定：1. 每个歌手只抓取Ta最热门的50首歌曲。2. 每首歌只要最热的前10条评论。当时目测歌手数量在1-2w，而有些冷门歌手没有50首歌曲，或者热门评论不足，也就是大概200万条左右（理想情况下 1-2w * 50 * 10）。实际上和我预期的少了不少，但是还是让我的1G VPS捉襟见肘了... #论确定需求的重要性#技术选型我使用过各种解析页面的库，现在一般只使用BeautifulSoup（bs4）或者lxml，如果页面比较简单，标签写的比较严谨且需求单一或者一次性一般都用BeautifulSoup，比如豆瓣；复杂的、未来会一直都在用的选择lxml，比如淘宝这种页面被各业务线拼的模板。我其实推荐大家好好学习xpath，这也是我选择lxml的一个原因。那为什么要用xpath，假如你只是爬一个站，其实无所谓，假如你要爬各种同类型的网站，比如豆瓣东西的发布东西，它支持发布数十个网站，肯定得让抓取框架化，因为发布东西要的那些字段都是定的，比如标题，价格，商品图片，用xpath新人可以不关心它怎么运作的，只是按照xpath寻找对应的元素去获取之，几分钟就能学会如何对一个新的网站进行支持，假如使用BeautifulSoup，你要写一坨坨的解析、遍历。而xpath永远都是一句搞定。接着说 concurrent.futures， 这是一个在Python 3.2 的时候就被放进标准库的模块，它高度抽象出了异步执行任务的接口，把队列的使用隐藏起来，而且多进程和多线程接口统一，对于使用来说，切换多进程和多线程很简单。这比你写一大坨的多进程或者多线程的代码要简单很多。它的数据流是这样的：我们这个需求中抓取逻辑中，这样使用：from concurrent.futures import ProcessPoolExecutor                                                                 
+
+
+with ProcessPoolExecutor(max_workers=2) as executor:                                                               
+    for artist_id in unprocess_artist_list():                                                                      
+        executor.submit(parser_artist, artist_id)
+可以把它理解成一个2个进程的进程池。如果你的服务器CPU个数更多，处理能力更强，不要吝啬加大这个值哦。最后说requests。这个太有名，不用它的人可能不理解为啥都用它，它的说明是「Python HTTP Requests for Humans」，是的，其实并没有人要用它，你得自己写一大坨的代码才能支持会话，Cookie，代理等需求。对于没有自虐倾向的人来说，Python标准库提供的方案确实太底层了。我之前还特意研究了下为了这么好的东西不直接放进标准库？ 看 Consider Requests' Inclusion in Python 3.5's Standard Library · Issue #2424 其中多个大神出没哦。怎么样不被发现1. 不要用一个IP狂爬。所以要准备一堆可用的代理IP，如果公司有额外的比较闲的IP最好了，闲着也是闲着，在不影响正常业务的提前下，多换IP。否则就要想办法获取免费代理。我的书中这个地方有写。2. 勤换UA。我看很多人喜欢在配置中列一些UA,  其实吧，可以使用 GitHub - hellysmile/fake-useragent: up to date simple useragent faker with real world database。其实我也推荐大家伪装成各大搜索网站的UA， 比如Google UA 有这样一些 Google 抓取工具，说到这里，有的网站，你添加referfer字段是搜索网站也是有用的，因为网站是希望被索引的，所以会放宽搜索引擎的爬取策略。3. 爬取间隔自适应。就是已经限制了你这个IP的抓取，就不要傻傻重复试，怎么滴也得休息一会。网易云音乐操作起来比较简单，sleep一下就好了。其实sleep的间隔应该按情况累加，比如第一次sleep 10秒，发现还是被约束。那么久sleep 20秒... 这个间隔的设置已经自适应的最终效果是经验值。4. 验证码识别。现在攻防让验证码技术层出不穷，其实好多都是自己写算法识别，并不开源，开源的就是tesseract，还可以借用百度识图平台试试。我个人还是倾其所有的做好其他的地方，不要让人家弹出验证码让我输入。开始爬首先一定要防止「由于异常等原因造成爬虫程序错误，重新启动还会重新爬」的尴尬。我建了一张Process表，用来存爬取的状态：开始爬取置状态为「PENDING」，抓取完成置状态为「 SUCCEEDED」（当然也有失败，比如页面解析未覆盖到情况造成的失败，之后失败的状态应该没有条目才对，否则就要去兼容）。每次抓取程序启动都会检查哪些PENDING的先抓完，抓过的直接忽略去下一个。真的数据Model包含4个：Artist（歌手）、Song（歌曲）、Comment（评论）和User（评论人），我们感受一下抓取的过程（截取重要部分）：def parser_artist(artist_id):                                                                                      
+    create_app()  # Flask应用要先初始化                                                                                                  
+    process = Process.get_or_create(id=artist_id)  # Process以歌手为单位                                                              
+    if process.is_success:  # 如果已经成功直接返回了                                                                                       
+        return                                                                                                                                                                                                                                                                                        
+                                                                                                                   
+    tree = get_tree(ARTIST_URL.format(artist_id))  # 使用requests获取页面文本，转化为lxml对象                                                                
+                                                                                                                   
+    artist = Artist.objects.filter(id=artist_id)                                                                   
+    if not artist:  # 如果之前没抓过                                                                                                
+        artist_name = tree.xpath('//h2[@id="artist-name"]/text()')[0]                                              
+        picture = tree.xpath(                                                                                      
+            '//div[contains(@class, "n-artist")]//img/@src')[0]                                                    
+        artist = Artist(id=artist_id, name=artist_name, picture=picture)                                           
+        artist.save()                                                                                              
+    else:  # 如果之前抓过，但是该歌手的歌曲没抓完                                                                                                        
+        artist = artist[0]                                                                                         
+    song_items = tree.xpath('//div[@id="artist-top50"]//ul/li/a/@href')                                            
+    songs = []                                                                                                     
+    for item in song_items:                                                                                        
+        song_id = item.split('=')[1]                                                                               
+        song = parser_song(song_id, artist) # 进入抓取和解析歌手模式                                                                        
+        if song is not None:                                                                                       
+            songs.append(song)                                                                                     
+    artist.songs = songs                                                                                           
+    artist.save()  
+    process.make_succeed()  # 标记歌手下的热门歌曲的热门评论抓完                              
+整体就是这样。整个抓取解析的流程的代码加上空格是110行。其中的热门评论是通过API获取的，思路可见 网易云音乐新版WebAPI分析。原文在这里： https://zhuanlan.zhihu.com/p/22456856
+
+
+-------------------------answer 7 via  -------------------------
+
+
+个人觉得：新手学习python爬取网页先用下面4个库就够了：（第4个是实在搞不定用的，当然某些特殊情况它也可能搞不定）1. 打开网页，下载文件：urllib2. 解析网页：BeautifulSoup，熟悉JQuery的可以用Pyquery （感谢 @李林蔚 的建议）3. 使用Requests来提交各种类型的请求，支持重定向，cookies等。4. 使用Selenium，模拟浏览器提交类似用户的操作，处理js动态产生的网页这几个库有它们各自的功能。配合起来就可以完成爬取各种网页并分析的功能。具体的用法可以查他们的官网手册(上面有链接)。做事情是要有驱动的，如果你没什么特别想抓取的，新手学习可以从这个爬虫闯关网站开始，目前更新到第五关，闯过前四关，你应该就掌握了这些库的基本操作。实在闯不过去，再到这里看题解吧，第四关会用到并行编程。（串行编程完成第四关会很费时间哦），第四，五关只出了题，还没发布题解。。。学完这些基础，再去学习scrapy这个强大的爬虫框架会更顺些。这里有它的中文介绍。感谢大家支持，改了改链接的格式，好看多了，呵呵
+
+
+-------------------------answer 8 via  -------------------------
+
+
+从爬虫必要的几个基本需求来讲：1.抓取py的urllib不一定去用，但是要学，如果你还没用过的话。比较好的替代品有requests等第三方更人性化、成熟的库，如果pyer不了解各种库，那就白学了。抓取最基本就是拉网页回来。如果深入做下去，你会发现要面对不同的网页要求，比如有认证的，不同文件格式、编码处理，各种奇怪的url合规化处理、重复抓取问题、cookies跟随问题、多线程多进程抓取、多节点抓取、抓取调度、资源压缩等一系列问题。所以第一步就是拉网页回来，慢慢你会发现各种问题待你优化。2.存储抓回来一般会用一定策略存下来，而不是直接分析，个人觉得更好的架构应该是把分析和抓取分离，更加松散，每个环节出了问题能够隔离另外一个环节可能出现的问题，好排查也好更新发布。那么存文件系统、SQLorNOSQL数据库、内存数据库，如何去存就是这个环节的重点。你可以选择存文件系统开始，然后以一定规则命名。3.分析对网页进行文本分析，提取链接也好，提取正文也好，总之看你的需求，但是一定要做的就是分析链接了。可以用你认为最快最优的办法，比如正则表达式。然后将分析后的结果应用与其他环节：）4.展示要是你做了一堆事情，一点展示输出都没有，如何展现价值？所以找到好的展示组件，去show出肌肉也是关键。如果你为了做个站去写爬虫，抑或你要分析某个东西的数据，都不要忘了这个环节，更好地把结果展示出来给别人感受。
+
+
+-------------------------answer 9 via  -------------------------
+
+
+全文大篇干货。从零手把手教你写第一个爬虫。首先我在初学的时候把高票答案都看了一遍，然后我说一下我的感受。网页的源码经常会改变的！网页的源码经常会改变的！网页的源码经常会改变的！重要的事情说三遍。所以你看到的那些14年甚至15年的东西很多都是不能用的。这个不知道误导了多少的新手，我在某些14年的文章下面的评论还看到16年有人在评论说怎么怎么用不了，原因就是网站的源码改了呗。入门爬虫其实很快，可能一个下午就够了，但是要精通非常困难。如果你有兴趣的话看完我这一篇文章，便能自己写一个爬虫了。接下来是教程。很蛋疼的是知乎不支持markdown所以很多的东西都不能用程序源码的形式只能用普通文本的形式，大家将就一下。       先给大家介绍一下爬虫，爬虫呢很形象，就是说你写的程序就是一个小虫子，在网页上爬啊爬，然后把自己需要的东西保存下来了。        需要工具：python2，因为是入门，所以这次用到的两个包都是python自带的import urllib2import re       简单介绍一下两个包，urllib2是用来解析网站的url的，re是一个正则表达式模块，在这个里面我用它来当比较。       首先我们要定义一个类，插一下话，大家最好都用你需要这个类或者变量做什么的英语来命名，这样维护这个代码，或者让别人来读你的代码的时候都方便很多。定义一个类你可以随便叫他什么，在这里我给他起个名字叫spiderMode，蜘蛛模块。他有四个属性，页，页面，能否访问，以及一个处理类，等会儿会讲到的。因为这次我们只要爬一个网页，所以页和页面其实也都可以不要，而且保证url是有效的，enable也可有可无。class spiderMode:       def __init__(self):             self.page = 1
+             self.pages = []             self.enable = False             self.sub = Sub()接下来就是来定义我们最重要的函数啦，用函数来抓取页面。我们用最最最最简单的糗事百科来作为例子。那么url就定义如下sUrl = "http://www.qiushibaike.com/"接下来是一个我们可以说是伪装，为什么呢因为你用python去访问人家的网站人家会不开心不让你访问，所以你就要披上一层皮，这层皮我们叫headers，定义如下userAgent = 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)'headers = { 'User-Agent': userAgent}好啦，这时候我们就可以去请求访问啦，首先要request一下，这个函数的作用就是request这个url，也就是我们定义的sUrl，headers是我们的伪装。request = urllib2.Request(sUrl, headers=headers)之后我们就可以打开这个链接response = urllib2.urlopen(request)用一个变量来读这个网页这时候你可以用print来读出一下，这时候出来的就是网页的源码。sPage = response.read()光有源码没有用，我们需要将它转变为能够处理的格式，因为本来是utf－8的编码，因此要经过一步转码，现在unicodePage里的东西就是我们需要的网页的所有源码啦unicodePage = sPage.decode("utf-8")这时候我们就需要找到所有的我们需要的信息，我们要来分析一下网页的源码，发现所有的笑话都是这么样的格式的<div class="content">女领导把我叫到办公室，目光在我身上扫射了一遍道：“听说你还没女朋友啊，要不要给你介绍个？”<br/>听得我有点莫名其妙，一向身为工作狂她，啥时候开始八卦起来了？但内心略有一丝欢喜，慌忙的点了点头，只见其接着道：“我刚离婚，考虑下不？”……</div>好了我们就能写出我们的re表达式，这一句的意思是在unicodePage中找到所有的夹在那两个东西之间的信息。（.*?）表示的是任意循环一次的信息。？是表示循环一次，如果你不加？的话就会直接定位第一个<div>和最后一个</div>了，这不是我们想看到的。myItems = re.findall('<div class="content">(.*?)</div>',unicodePage,re.S)其实这时候就做的差不多的，这时候我们就可以直接输出了。但是看一下刚才的源码中有几个</br>，这是什么呢？其实是换行符，所以我们要定义一个类来去掉换行符，并且加入我们输出的时候用刀的换行符"\n"。用以下代码实现。class Sub:    replaceBr = re.compile('<br/>')    def replace(self,x):        x = re.sub(self.replaceBr,"\n",x)
+        return x.strip()这也是我们刚才提到的sub类，可以用来整理格式。最后就是输出啦，顺便再编一个号。num=1        for item in myItems:
+            print str(num) +'. ' + self.sub.replace(item) +'\n'
+                  num += 1整个程序就是这么的简单，下面我贴一下完整的源码方便大家看一下。一个爬虫就这么做好了。当然这个是最最简单的，之后怎么进阶就需要大家去思考啦。＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝我是广告＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝买了mac却不知道怎么用？关注我的读读日报吧，每天都有高质量的回答与文章推送，让你高效而又优雅的使用mac，如果大家有推荐与意见也欢迎私信我。谢谢大家谢谢大家

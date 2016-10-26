@@ -1,0 +1,365 @@
+
+
+
+Python 的练手项目有哪些值得推荐？ - 编程 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/29372574 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+我不是伸手党，在网上搜了很多类似的问答，没有很满意的答案。我基本上把python的基本语法看完了，还花了一个月左右的时间Yixiaohan/show-me-the-code · GitHub里面的题目啃完了，对python有了一个大致的了解，现在想用python来做一个完整的项目，有没有大神推荐github上的项目，我自己大致看了一下，觉得这个基于node.js的豆瓣命令行很不错：想用python重写一遍，不料我身边已经有同学捷足先登了，提前实现了，这即使我做完之后都不好意思在他面前装逼了，不知道各位还有没有发现别的不错的python项目，最好是综合性的，不要是网站，谢了，题主是一个计算机相关专业大三学生，有一定编程基础。
+
+-------------------------answer 0 via  -------------------------
+
+
+更新：兄弟们如此给力，小弟受宠若惊，好东西就是用来分享的。 500 line or less只是某个系列丛书中第四本，其他三本链接：http://www.aosabook.org/en/index.html可以在线看哦前两本每章介绍出名开源软件的架构，你说的上名字的开源基本上都能找到，短小精悍的介绍框架第三本介绍开源软件中实际遇到的一些performance的问题以及解决方案，同样浓缩啊！！ 每章的作者大多就是此开软软件的开发者啊！！！不用多说，点开你就知道啊不想看英文的怒点 http://www.ituring.com.cn/article/13057前两卷的中文版，不知道翻译的怎么样----------------------------------------割了你--------------------------------------------------------------和楼主一样在学习python， 最近找到一本python神书 500 line or less. 有兄弟提到了git的源码，这里不只是源码，而是这么一本书，目前还没出版，但是在网上有已经看到了 review版本。强烈推荐！！！强烈推荐！！！强力推荐！！！这本书共16个章节，每章均是由该领域的大牛完成，用不到500行的代码实现一个特（装）定（逼）功能。本书链接 http://aosabook.org/blog/目录页：http://aosabook.org/blog/以下是章节目录，每一章都让你热血澎湃，看完介绍你就向往下读。1. A Template Engine （http://aosabook.org/en/500L/a-template-engine.html）    MVC模型中的view层如何解析html中的静态变量和简单的语句，如下：<p>Welcome, {name}!</p>
+<p>Products:</p>
+<ul>
+{products}
+</ul>
+web中的view层不只是html代码，还有支持其他的代码。比如 {products}是一个变量。 同时view层还支持{if} , {for}, {foreach}等等。django，velocity等是如何解析他们的？大牛用不到500行代码告诉你，是如何实现的？ （不是替换，替换需要每次请求都需要解析）2. Web Spreadsheet （http://aosabook.org/en/500L/web-spreadsheet.html）   web的电子表格如何实现的？ 好像比较简单，但是介绍了 web storage 和 web worker，还是很值得一看的3. A Web Crawler http://aosabook.org/en/500L/a-web-crawler-with-asyncio-coroutines.html   不多说，几百行代码实现高效的网络爬虫， 高效！4. Static Analysis http://aosabook.org/en/500L/static-analysis.html     成熟的IDE都有代码检查和代码提示，怎么做的？ 看这章5. Clustering by Consensus http://aosabook.org/en/500L/clustering-by-consensus.html    分布式系统 paxos原理与实现。不知道paxos说明你没接触过分布式体统，接触过分布式还不懂，说明你只会用分布式系统6. A Simple Object Modle http://aosabook.org/en/500L/a-simple-object-model.html    Python是面向对象语言，对象，继承，多态，怎么用代码实现的，不到500行代码，实际不到400 行， 666.。。7. An Archaeology-Inspired Database http://aosabook.org/en/500L/an-archaeology-inspired-database.html    如何用python实现一个数据库，支持 query，index, transaction， 2，3百行代码和对每个函数的讲解。看完你就知道知道数据库原理，太值了8. Dog Bed Database http://aosabook.org/en/500L/dbdb-dog-bed-database.html   类似上一章，不过这次实现的是key-value的非关系型数据库，详细的讲解和2，3百行代码9. A 3D Modeller http://aosabook.org/en/500L/a-3d-modeller.html    用python实现一个3D设计，显示到屏幕，可以交互。不是很懂，但不明觉厉10. A Python Interpreter Written in Python http://aosabook.org/en/500L/a-python-interpreter-written-in-python.html      手把手教你如何实现python解析器。11. A Pedometer in the Real World http://aosabook.org/en/500L/a-pedometer-in-the-real-world.html       你用过手机应用记录你每天走的步数，然后发送到朋友圈吗？ （没有？ 没关系。）这章告诉你如何实现步数记录，怎么算走一步。手机中有加速记，很容易获得你某一时刻在x,y,z三个方向的加速度，用这些参数，如何计算你走了多少步？ 知道吗？ 不知道，看这章，讲解加实现12. A Continuous Intergration System http://aosabook.org/en/500L/a-continuous-integration-system.html      CI System是一个专门用来测试新代码的系统，根据代码提交记录，拿到新的代码，测试，生成报告。这不是关键，关键是 如果test失败，它还会 恢复，然后从失败的那个点在跑，相当于把出错环境重现了。。。13 A Rejection Sampler http://aosabook.org/en/500L/a-rejection-sampler.html      不是很懂，和机器学习相关，如何 计算你赢得象棋比赛的概率，天气对飞机的影响等类似的问题14 A visual programming toolkit http://aosabook.org/en/500L/blockcode-a-visual-programming-toolkit.html      不太明白15.  A Flow Shop Scheduler http://aosabook.org/en/500L/a-flow-shop-scheduler.html      flowshop调度问题，好像很出名的样子，最优化问题，如何从局部最优解找全局最优解16  Optical Character Recognition      几百行代码使用人工神经网络实现识别手写字母。。。github源码：500lines/README.md at master · aosabook/500lines · GitHub
+
+
+-------------------------answer 1 via  -------------------------
+
+
+推荐一下我的Ideabook，不仅仅有各种练手项目，还有实战指南：GitHub: GitHub - phodal/ideabook: Idea in Action分析网站日志，打造访问地图概况背景ShowCaseHadoop + Pig + Jython + AmMap + ElasticSearch步骤Step 1: 搭建基础设施Step 2: 解析access.logStep 3: 转换IP为GEO信息Step 4: 展示数据到地图上练习建议书籍录入程序概况背景ShowCaseIonic + Zxing步骤Step 1: ZXing扫描与Douban APIStep 2: 存储数据库练习建议程序员专属Badge制作概况背景ShowCaseSVG与SVGWrite步骤Step 1: 基本图形Step 2: 高级BadgeWeb文本编辑器概况背景ShowCaseCKEditor + Ractive步骤Step 1:Step 2:Step 3:练习建议JavaScript打造Slide应用概况背景Showcase需求步骤Step 1: 基本的Slide功能Step 2: 解析MarkdownStep 3: 事件处理Step 4: 解析时间Step 5: 进度条Step 6: 同步练习建议编辑-发布-分离应用概况背景: 编辑-发布-开发分离用户场景步骤Step 1: 构建工具Step 2: 静态页面生成Google Map与Solr实现多边形搜索概况背景ShowcaseSolr步骤Step 1: Solr FlaskStep 2: Google map Polygon一份代码打造跨平台应用概况背景ShowCaseIonic & Electron & Cordova步骤Step 1: 从Web到混合应用，再到桌面应用Step 2: 响应式设计Step 3: 平台特定代码未来Ionic ElasticSearch打造O2O应用概况背景Showcase构架设计步骤Step 1: Django GIS 设置Step 2: 配置HaystackStep 3: Django Haystack Model创建Step 4: 创建search_indexStep 4: Ionic ElasticSearch 创建页面Step 5: Ionic ElasticSearch ServiceStep 6: Ionic OpenLayer 地图显示跨协议的物联网平台设计概况背景Showcase步骤Step 1: 架构设计物联网服务层Step 2: 基本骨架Step 3: 六边形架构Step 4: 整合Step 5: 练习建议一步步搭建JavaScript框架: Lettuce概况背景步骤Step 1: 注册npm和bower包Step 2: 生成Javascript项目框架Step 3: 寻找所需要的函数Step 4: 整合Step 5: 测试练习建议基于Virtual DOM的测试代码生成概况背景ShowCase基本原理步骤Step 1: Virtual-dom与HyperScriptStep 2: 标记DOM变化移动框架概况背景ShowcasejQuery + Backbone + UnderScore + Require.JS步骤Step 1: 使用Require.js管理依赖Step 2: 添加路由Step 3: 创建主页ViewStep 4: jQuery SidrStep 5: Django Tastypie示例Step 6: RequireJS PluginsStep 6: 简单的博客Step 7: 重构Step 8: 移动CMS滑动Oculus + Node.js + Three.js 打造VR世界概况背景Showcase框架： Oculus Rift & Node NMD步骤Step 1: Node Oculus ServicesStep 2: Node.js Oculus Hello，WorldStep 3: Node Oculus WebSocketStep 4: Oculus Effect + DK2 ControlStep 5: Three.js KeyHandler练习建议制作照片地图概况Background:把照片放在地图上Showcase框架： EXIF & ExifRead & CartoDB步骤Step 1: 解析读取照片信息Step 2: 上传数据练习建议D3.js 制作技能树概况背景ShowcaseGraphviz步骤Step 1: 打造简单的技能树Step 3: D3.js Tooltipster技术雷达趋势概况背景ShowcaseD3.js步骤Step 1: Schema与原始代码Step 2: 处理数据文本转化为Logo概况背景ShowCase需求说明步骤Step 1: Python 文字转Logo实战GEOJSON与ElasticSearch实现高级图形搜索概况背景ShowcasejQuery + Mustache + Leaflet步骤Step 1: 离线地图与搜索Step 2: 从地点到地图上显示Step 3: 从地图到地点上显示上点图：Django + ElasticSearch + Ionic制作移动O2O应用Python + SVGWrite制作专属BadgePython生成LogoPython获取照片信息显示到地图上Flask + Solr 制作多连形搜索
+
+
+-------------------------answer 2 via  -------------------------
+
+
+目前是35个Python项目，会继续保持更新。Learn by doing才是正确的技术学习姿势。20160918更新：Python - Python3 实现火车票查询工具20160816更新：Python - 高德API+Python解决租房问题20160802更新：Python - Python3 色情图片识别………………………………………………分隔线………………………………………………最近几天刚好在整理Python项目，21个项目由易到难，代码量从几十行到几千行，在实验环境里保证可以全部完成。找到你认为有趣的去实现它，把项目做出来，知识才能变成自己的：）(建议PC端访问，边看教程边在环境里动手实践，手机上仅可查看教程)入门篇1.Python - Python 图片转字符画50 行 Python 代码完成图片转字符画小工具。2.2.Python - 200行Python代码实现2048仅用200行的python代码完成2048小游戏的编写。3.Python - pygame开发打飞机游戏使用Python快速开发一款PC端玩耍的微信打飞机游戏，基于pygame实现。4.Python - 每天一个PythonChallenge《任务一》看图闯关：根据图片改变url地址、转换字符串、字符识别5.Python - 每天一个PythonChallenge《任务二》看图闯关：根据图片找出满足条件字母等6.Python - 每天一个PythonChallenge《任务三》看图闯关：找到通往下一个网址的链接、找到消失的链接等7.Python - python生成汉字图片字库使用pygame和PIL模块渲染字体生成字库。8.Python - 基于 Python 的文件备份Python 做个简单的备份脚本程序，可以备份主目录和系统文件等。9.Python - Kaggle入门：泰坦尼克号幸存者项目Kaggle是一个线上数据科学竞赛类网站。本课程将使用python科学计算工具对Kaggle提供的泰坦尼克号上的人员数据进行分析建模。10. Python - 基于scrapy爬虫的天气数据采集(python)介绍如何用Scrapy（用python开发）爬虫采集新浪天气信息。11.11.Python - Python文本解析器使用Python来解析纯文本生成一个HTML页面的小程序。12.Python - 多张图片拼接与层叠几百张图片拼接成一张图片，这张图片再与另外一张图片层叠在一块。13.Python - Python 破解验证码通过一个简单的例子来讲解破解验证码的原理。14.Python - 用Python做2048游戏通过GUI来体验编程的乐趣。15.Python - Python 实现端口扫描器使用 Python 语言开发服务器端口扫描器，用来检测目标服务器上有哪些端口开放。16.Python - Python实现简单的Web服务器使用 Python 语言实现一个 Web 服务器，探索 HTTP 协议和 Web 服务的基本原理。17.Python - python自动填问卷星18.信息安全 - Python 实现 FTP 弱口令扫描器通过使用Python实现一个FTP弱口令扫描器开始，入门Python渗透测试技术，实验涉及FTP协议原理，ftplib 库的使用等知识点。19.Python - Python3 实现可控制肉鸡的反向Shell本次实验通过使用 Python 实现了可控制肉鸡的反向Shell连接，主要学习反向Shell的实现方法。实验涉及Tcp协议、Scoket基本用法、多线程编程。20.Python - Python3 实现淘女郎照片爬虫本实验通过使用 Python 实现一个淘宝女郎图片收集爬虫，学习并实践 BeautifulSoup、Selenium Webdriver 及正则表达式等知识。进阶篇21.Python - Python3 色情图片识别使用 Python3 去识别图片是否为色情图片，我们会使用到 PIL 这个图像处理库，会编写算法来完成对划分图像的皮肤区域。22.22.Python - Python实现3D建模工具本课程将基于OpenGL实现一般CAD软件都会具备的基础功能：渲染显示3D空间的画面并可以操作3D空间中物体。23.23.Python - Python3 实现火车票查询工具本课程使用 Python3 抓取 12306 网站信息提供一个命令行的火车票查询工具。通过该项目的实现，可以熟悉 Python3 基础及网络编程，以及 docopt，requests，prettytable 等库的使用。24.Python - Python实现基于协程的异步爬虫探讨几种实现爬虫的方法，从传统的线程池到使用协程，每节课实现一个小爬虫。另外学习协程的时候，我们会从原理入手，以ayncio协程库为原型，实现一个简单的异步编程模型。25.Python - Python实现模板引擎模版引擎使得用户界面能够与业务数据分离，前端与后端分离，它通常用于渲染页面文件。本课程将使用Python实现一个具备基础功能的模板引擎。26.Python - 使用 Python 3 编写系列实用脚本使用 Python 3 来编写一系列的实用脚本，实验的过程中能熟悉 Python 3 的使用，学习使用各种功能强大的模块。27.Python - Python实现Python解释器从实现一个玩具解释器开始学习解释器基本知识,然后考察Python字节码进一步学习理解Python解释器的内部机制，最终实现一个500行以内的Python解释器。28.Python - 高德API+Python解决租房问题编写Python脚本爬取某租房网站的房源信息，利用高德的 js API 在地图上标出房源地点，划出距离工作地点1小时内可到达的范围，附上公交路径规划功能查看不同路径的用时。29.29.Python - 基于 Flask 及爬虫实现微信娱乐机器人本次课程是基于 Flask Web 框架开发的娱乐级别的微信公众号后台，学习并实践 python 编程，Flask Web 开发以及微信公众平台开发机器人的基本步骤。30.Python - 基于Flask/RethinkDB/Backbone.js实现TODO List使用 RethinkDB，Flask 与 Backbone.js 制作一个简单的 todo list。31.Python - Flask开发轻博客使用Python Flask Web框架开发一个具备基本功能的轻博客平台，在其中学习Python的Web开发。32.Python - Django 搭建简易博客本教程介绍如何一步步使用 Django 开发一个简单的博客 Web应用，涉及 Django Web开发，MVC，Template等知识点，适用于有 Python 和 Django 基础的同学。综合篇33.Python - Python版设计模式实践多种常见的设计模式的原理以及如何应用实践,涵盖工程模式，命令模式，外观模式，适配器模式，装饰模式，代理模式等。34.Python - 仿OpenStack开发云计算管理软件使用Python语言开发一套类似OpenStack的云计算管理平台LouCloud，具备基本的用户，服务器，镜像与虚拟机管理功能。35.Python - 仿StackOverflow开发在线问答系统使用Python Flask Web开发框架实现一套类似StackOverflow的在线问答平台LouQA，具备提问，回答，评论点赞等功能。
+
+
+-------------------------answer 3 via  -------------------------
+
+
+python程序员提高必做开源项目robobrowser 
+A library for web scraping built on Requests and BeautifulSoup. Like Mechanize, but with tests, docs, and a Pythonic interface.github.com
+Shared by @whatthecarpmining github.com
+Shared by @mgrouchywagtail 
+Wagtail is a Django content management system with a fresh take. 
+Beautifully designed so if you are looking for an alternative to Django 
+CMS here is your shot.github.com
+Shared by @tomdhuey 
+A multi-threaded task queue for Python.github.com
+Shared by @myusuf3Flask API 
+Love Django REST Framework? You can now enjoy the same beautiful APIs within Flask.flaskapi.org
+Shared by @myusuf3Mario Level 1 In Python 
+Recreating the first level in Mario using PyGame. Awesome for anyone interested in build a 2D platformer.github.com
+Shared by @myusuf3Algorithms 
+A collection of Data Structures and Algorithms in Python.github.com
+Shared by @myusuf3rumps 
+Ridiculously Uncomplicated Mac OSX Python Status Bar Apps! Got a little app you want to write you can do it Python now!github.com
+Shared by @myusuf3psdash 
+Nice looking web dashboard written in Flask that can display data about your system and its processes as returned by psutil.github.com
+Shared by @mgrouchy500 Lines or Less 
+Awesome repository of how things work with computers and software. I am 
+sure we have shared this before but its definitely worth another look.github.com
+Shared by @myusuf3IPython Notebook Themes 
+Awesome theme customization for IPython Notebooks!github.com
+Shared by @myusuf3Jarvis 
+An attempt to create a Jarvis-like personal assistant with Python.github.com
+Shared by @mgrouchyPython Practice Projects 
+A series of Python practice projects to help your hone your craft with deliberate practice.pythonpracticeprojects.com
+Shared by @mgrouchyFlask-Foundation 
+A foundation leveraging best practices that you can use to start building your flask applications with.github.com
+Shared by @mgrouchyStellar 
+Fast database snapshots for development. It’s like Git for databases.github.com
+Shared by @versaepercol 
+Nice. Percol is an interactive grep tool in your terminal. Check out the README for a demo and more information.github.com
+Shared by @mgrouchymagpie 
+Git-Backed Evernote Replacement.github.com
+Shared by @myusuf3Explore Flask 
+The Explore Flask book is now freely available online. Time to upgrade your Flask knowledge.exploreflask.com
+Shared by @mgrouchyThe Stolen Crown RPG 
+Cool! A Fantasy RPG built with Python and PyGame.github.com
+Shared by @mgrouchydjango-quicky 
+A collection of tools to get you focused on what you building rather 
+than the usual nitty gritty, tons of of cool little functionality to 
+speed things up!github.com
+Shared by @myusuf3doitlive 
+Cool little hack to make you look like a superstar during presentations 
+and screencasts. It allows you to write code before hand, and replays 
+the commands in a fake terminal session as you type random characters.github.com
+Shared by @myusuf3Data Science 45 minute intros. 
+45 minute Ipython notebook presentations for getting starting with basic
+ programming, statistics and machine learning techniques.github.com
+Shared by @mgrouchybattleschool 
+This is neat. Set up your development environment using ansible in a similar way you would set up your machine with something like Boxen.github.com
+Shared by @mgrouchyawesome-python 
+A curated list of awesome Python resources, frameworks, libraries and software.github.com
+Shared by @mgrouchyinbox 
+Inbox platform launched earlier this week, with tons of SDKs and 
+libraries! This is the one in Python. Great premise and should enable 
+people to do some great stuff!github.com
+Shared by @myusuf3py-must-watch 
+A great collection of must watch Python videos. Great resource to start levelling up your Python knowledge.github.com
+Shared by @STajbakhshawesome-machine-learning 
+A curated list of awesome Machine Learning frameworks, libraries and software.github.com
+Shared by @myusuf3python-fields 
+Writing container classes often requires the writing of significant 
+amounts of boilerplate. Avoid all of that with the fields module which 
+offers a way to avoid it.github.com
+Shared by @mgrouchyawesome-django 
+Over the last few issues there have been other “awesome” collections. If you are into Django, this is the one for you!github.com
+Shared by @myusuf3Toga 
+A Python native, OS native GUI toolkit. Very cool project for building Native GUI apps with Python.pybee.org
+Shared by @mgrouchydoorman 
+Keeps your secrets, secret. Allows you to put the keys, passwords and 
+things you want to keep secret in a config file and then hide and show 
+your secrets.github.com
+Shared by @halitalptekinvim-bootstrap 
+A simple website that helps you bootstrap your .vimrc for your preferred language.github.com
+Shared by @mgrouchypython-patterns 
+A collection of common Python design patterns and idioms.github.com
+Shared by @mgrouchyflask-xxl 
+Interesting. A best practices approach to creating large web apps, with the goal of making flask feel more like django.github.com
+Shared by @mgrouchydiscover-flask 
+A weekly series of Screencasts covering an introduction to Flask.github.com
+Shared by @mgrouchyawesome-sqlalchemy 
+Lots of really awesome SQLAlchemy resources.github.com
+Shared by @mgrouchylenscap 
+Lenscap is a static site generator for creating beautiful photo narrativesgithub.com
+Shared by @myusuf3schematics 
+A Python library to combine types into structures, validate them, and transform your data based on simple descriptions.github.com
+Shared by @mgrouchyhome-assistant 
+Home automation with Python.github.com
+Shared by @mgrouchy500 Lines or Less 
+Awesome repository of how things work with computers and software. I am 
+sure we have shared this before but its definitely worth another look.github.com
+Shared by @myusuf3tortilla 
+Very cool project for consuming APIs made easy. Give it a look if you are tried of writing API wrappers.github.com
+Shared by @myusuf3iterstuff 
+A collection of tools for working with iterators.github.com
+Shared by @benlast
+Articles
+Python 201: Properties pythonlibrary.org
+Shared by @myusuf3Reasons for Using IPython Interactively 
+You might have heard all the talk about the wonderful IPython notebooks,
+ here are some reasons why you should check out the IPython interactive 
+shell.fastml.com
+Shared by @myusuf3A Django Code Organization Strategy 
+I like to see this type of writing when is comes to software and how it 
+is laid out. This covers various options and solving problems and 
+proposes a few solutions. Favourite is in the comments.github.io
+Shared by @myusuf3How to Save 90% on Your S3 Bill 
+Awesome find, everyone hosting anything on S3 will want to read this.appneta.com
+Shared by @myusuf3Full Stack Python 
+A great guide of dealing with the full stack required with creating a 
+Python web application. Topics cover the entire stack from servers, web 
+frameworks, security and source control.fullstackpython.com
+Shared by @mgrouchyStarting A Python Project The Right Way 
+Have an idea for your next, or first, Python project? Well check out 
+this article to make sure you are getting started the right way!jeffknupp.com
+Shared by @mgrouchy14 Minimal Web Frameworks for Python 
+Want to try a lighter web framework then Django? Check out these minimal Python web frameworks.codecondo.com
+Shared by @alexivanovsSaying Goodbye To Python 
+Amazing article and growth and the real strength of the Python community.ianbicking.org
+Shared by @myusuf3A Celery-like Python Task Queue in 55 Lines of Code 
+Nice tutorial about how one would go about starting to create a task queue in Python.jeffknupp.com
+Shared by @mgrouchyHow We Use Gevent to go Fast 
+Nice overview of how Pinterest used gevent to increase throughput of 
+site and speed up requests. They also cover the challenges they faced 
+during the switch over.pinterest.com
+Shared by @myusuf3Unit Testing SQLAlchemy 
+How do you test your SQLAlchemy apps? Check out this post and its predecessor for the low down.blogspot.ca
+Shared by @mgrouchyHow to Create a Python Library 
+In depth tutorial on how to create a python library and package it.pypix.com
+Shared by @myusuf3Introduction to Python for Statistical Learning 
+Great introduction to tools like numpy, pandas and matplotlab for doing statistical learning work in Python.datarobot.com
+Shared by @mgrouchyLessons Learned Architecting Realtime Applications 
+This discusses the various options of building realtime applications in 
+python and various technologies and techniques used and their 
+limitations. Good read.lincolnloop.com
+Shared by @myusuf3Unyielding 
+Glyph of Twisted fame talks has written a great article about concurrency in Python.twistedmatrix.com
+Shared by @mgrouchyPython Concurrency: An Intro to Threads 
+Great tutorial here. If you are looking to jump headfirst into Python 
+threading and concurrency, this is as good a place as any to start.pythonlibrary.org
+Shared by @mgrouchyPython Property 
+Nice well written introduction to Python properties.programiz.com
+Shared by @myusuf3Generating Machine Learning Models With Scikit-Learn 
+In a follow up to his last post about “Building decision trees” the 
+author gives a nice explanation of how to generate machine learning 
+models with scikit-learn.garysieling.com
+Shared by @mgrouchyUnderstanding Test Driven Development with Django 
+If you are looking to learn a little more about Test Driven Development 
+or are wondering about applying your TDD knowledge to your Django work, 
+this is a great place to start.arunrocks.com
+Shared by @mgrouchyMake Python Faster Without Trying Too Much 
+Nice article on the few steps you could take to make your code run 
+faster without too much effort. Few great tips on profiling and taking 
+advantage of things like pypy and cython!lukauskas.co.uk
+Shared by @myusuf3Fast scraping in python with asyncio 
+Cool article showing you how to build a faster screen scraper by downloading pages asynchronously with asyncio.compiletoi.net
+Shared by @mgrouchyMeta Programming with Python 
+Meta programming basics and as well introduces metaclass hooks.wordpress.com
+Shared by @myusuf3Understanding Python By Breaking It 
+Increase your Python knowledge by breaking it. The author goes though a guided tour of poking and prodding CPythons internals.hakril.net
+Shared by @mgrouchyWho needs a database? 
+Interesting thought experiment about completely knocking out database 
+from stack, this obviously has some issues but interesting to see how it
+ comes together.getsilvi.com
+Shared by @myusuf3Logging as Storytelling #3: Types 
+Have you ever considered what it takes to write excellent and consistent
+ log messages? This article and its predecessors helps you define that.hybridcluster.com
+Shared by @mgrouchyAn Artificial Intelligence for the 2048 game 
+2048 has been all the rage lately with projects cropping up everywhere. 
+This is a cool examination of implementing an AI to solve the game.blogspot.it
+Shared by @mgrouchy20 Good Functions To Know in Python 
+Another one of these lists that just keep coming up. Likely last one we will link to so enjoy!thelivingpearl.com
+Shared by @myusuf3Python Project Howto 
+A great place to get started to turn your Python script into a Python 
+project. Great guide that brings you from creating a repository to 
+testing your code, all the way to packaging and releasing your code.infinitemonkeycorps.net
+Shared by @mgrouchyBuild a Flask App in 30 Minutes 
+Get up and running with your first Flask app in no time!stormpath.com
+Shared by @goStormpathWriting Purposeful Unit Tests 
+Nice post about writing good unit tests to help you write better code, 
+prevent regressions and allow you to assert the correctness of your 
+code.appneta.com
+Shared by @mgrouchyOOP concepts in Python 2.x – Part 1 
+Cool little article on OOP way of thinking and Python.github.io
+Shared by @tw_lgiordaniGetting Started with pylint 
+Introduction to Pylint for beginners.blogspot.ca
+Shared by @myusuf3Lightweight Virtual Environments in Python 3.4 
+Article covers new venv features and usecases in Python 3.4drdobbs.com
+Shared by @myusuf3Understanding Gunicorn’s Concurrency Model 
+Nice article touching the finer points of gunicorn’s concurrency models.volant.is
+Shared by @myusuf3Visualizing Realtime Data w/ Python, D3, RabbitMQ 
+Article on consuming data from the twitter stream using RabbitMQ and Python. Then finally visualizing the data using D3.jsbrettdangerfield.com
+Shared by @myusuf3Python Data Structures are Fast 
+Nice article that some of you may find illuminating, with respect where 
+certain speed ups and loses may actually occur in Python data 
+structures.matthewrocklin.com
+Shared by @mgrouchyA little note-taking app with Flask 
+Awesome read for beginners looking to start a small flask project. This 
+one covers the process of creating s simple note taking application in 
+Flask.charlesleifer.com
+Shared by @myusuf3Module Properties | The Proxy Pattern 
+Nice explanation of how to add a @property to a Python module.github.io
+Shared by @mgrouchyThe Light and Dark Sides of Python Name Binding 
+Pretty cool dive into python name binding! Tons of mind cool stuff to take advantage of for good and/or evil!excess.org
+Shared by @myusuf310 Most Common Python Mistakes 
+Nice round up of really common Python gotcha’s that can trip up Python developers.toptal.com
+Shared by @mgrouchyPython Partials are Fun! 
+If you have been wondering about how to get started with Partials this 
+is a great place to start. With a good explanation of what they are and 
+an easy to follow example to see the flexibility and power of partials.pydanny.com
+Shared by @mgrouchyMaking a specific Django app faster 
+Really nice detailed article of the steps you the author followed to 
+speed up a Django application through profiling and optimization with 
+tips on how you can apply these to your applications.vanrees.org
+Shared by @Dynamic Programming with Python 
+A walk through the Dynamic Programming strategy with a fun Python examplejminuscula.es
+Shared by @jminusculaWhy I push for Python 
+Great article about why an engineering professor would make a push to teach Python to undergraduates.lorenabarba.com
+Shared by @mgrouchyDockerizing a Python Web App 
+Docker has been all the buzz lately and this post shows you how to turn 
+your Python web app into an application that can be deployed using 
+docker containers on AWS.amazon.com
+Shared by @mgrouchyHow to Organize Your Python Application Code 
+Nice article with some good tips of how to organize your Python code next time you are writing a Python application.pythonblogs.com
+Shared by @mgrouchyMethod overriding in Python 
+Nice tips on Inheritance and Method overriding in Python.github.io
+Shared by @tw_lgiordaniHow do I Gevent? 
+Really nice extensive tutorial on Gevent. Provides plenty of background 
+information, its pros and cons and how it all works by showing how to 
+create a simple web crawler.hownowstephen.com
+Shared by @mgrouchyUsing Mocks in Python 
+Extensive introduction to mock library in Python with tons of examples. 
+If you are looking to learn a few things about mock this article is a 
+good resource.drdobbs.com
+Shared by @myusuf310 Awesome Features of Python 3 
+Awesome presentation on why you should seriously consider Python 3 and what you are missing out on!github.io
+Shared by @myusuf3Is Crossbar.io the Future of Python Web Apps? 
+Crossbar is an application router that implements WAMP. Nice post where the author talks about Crossbar and wonders if Crossbar could be the future of Python web applications.tavendo.com
+Shared by @mgrouchyWhy Python 4.0 won’t be like Python 3.0 
+Nick Coghlan discusses the far future transition to Python 4.0, as well 
+as touches on how it might not be exactly like the transition between 
+Python 2.0 and 3.0curiousefficiency.org
+Shared by @myusuf3Things from Python I’d miss in Go 
+If you switched from Python to Go what would be the features you would 
+miss from Python in Go? This is the question the author addresses in 
+this post.yosefk.com
+Shared by @mgrouchyParallel Programming in Python 
+A very complete introduction to parallel programming in Python using 
+Python’s multiprocessing module. This introduction takes you from the 
+specifics about the multiprocessing module to its application.sebastianraschka.com
+Shared by @mgrouchyPython Classes and Object Oriented Programming 
+Everything you wanted to know about Object Oriented Programming in Python. Great introduction.jeffknupp.com
+Shared by @mgrouchyWhy Every Language Needs Its Underscore 
+Interesting article about the funcy library and how it is analogous to 
+the Underscore.js library. Its purpose is to make your life easier when 
+writing code and give you a series of functional tools to write cleaner,
+ more understandable code.hackflow.com
+Shared by @mgrouchyWhy Python (or any decent language) Doesn’t Need Blocks 
+Very opinionated article on the hype of blocks in other languages and why they are no better than functions.blogspot.it
+Shared by @myusuf3Using Docker as a Python Development Environment 
+Docker is all the new hotness, check out this post detailing how to use Docker for your Python development environment.uglyduckling.nl
+Shared by @mgrouchyAnti-Patterns in Python Programming 
+A look at some common Python programming anti-patterns and how to correct those common mistakes.lignos.org
+Shared by @mgrouchyDecorators and Functional Python 
+How can Python’s decorators help us thing in a functional way? Great 
+information about Python decorators and how how they can teach us to 
+think about functional concepts like higher order functions and 
+closures.brianholdefehr.com
+Shared by @mgrouchyThe Forgotten Optional else in Python Loops 
+I love this article, if you always felt dirty creating variable to keep track of conditionals, else clause reprise y’all.svbtle.com
+Shared by @myusuf37 Python Regular Expressions Examples 
+Get the lowdown on using Regular expressions in Python.thegeekstuff.com
+Shared by @mgrouchyMethod decorators in Python 
+Decorators is probably the most popular topic for Python programming 
+blogs. We can probably take this as a sign that not everyone understands
+ them yet so check out this post on method decorators.agiliq.com
+Shared by @mgrouchyHow to argue for Python’s use 
+Python core developer Brett Cannon gives you some ammunition next time 
+someone asks you “Why use Python?”. Nice contrast of the reasons why Go 
+is a good language and why you might still want to use Python.svbtle.com
+Shared by @mgrouchyBecome A Better Programmer – How To Read Source Code 
+Reading source code is one of the most useful skills to learn for any 
+programmer. In this post the author gives some nice tips to step up your
+ code reading game.pythonpracticeprojects.com
+Shared by @mgrouchySimple Python Parallelism 
+Nice tutorial of how to easily parallelize tasks in Python with the languagesmultiprocessing library without getting bogged down learning other parallization frameworks.github.io
+Shared by @mgrouchyMaking database-backed dashboards in 3 minutes 
+Very simple tutorial to create Matplotlib graphs and ship them as part of email reports and web dashboards.maxmautner.com
+Shared by @myusuf3Getting Started with Python Internals 
+Nice guide to get you ready to jump in and start working with Python internals.github.io
+Shared by @mgrouchySetting up Sublime Text 3 for Full Stack Python Development 
+Fantastic guide to help you get up and running with Sublime Text for your next Python project.realpython.com
+Shared by @mgrouchyPython for Programmers 
+A nice collection of all the things you probably wanted to know when you started writing python programs.rustyrazorblade.com
+Shared by @mgrouchyRefactoring monolithic if/else filters with closures 
+Nice little example on how to refactor your monolithic if/else clauses 
+for filtering data. Provides a small albeit contrived example to 
+illustrate the issue.startmake.com
+Shared by @scottallenonTeaching an old dog new tricks – or, how I learned to love Python’s str.format, and gave up on % 
+Very nice guide about changing your ways from using ‘%’ to format Strings in Python and use string.format instead.lerner.co.il
+Shared by @mgrouchyHow to Use Python Regular Expressions to Parse a Text File (Practical Use Case Scenario with Python Reg-Ex Re Split Sub) 
+Great tutorial. Guides you step by step to parsing and cleaning up the 
+resulting text from text files with Python regular expressions.thegeekstuff.com
+Shared by @mgrouchyHigher Order Functions and List Comprehensions in Python svbtle.com
+Shared by @myusuf3How to Supercharge Your Python Shell with a .pythonrc 
+Awesome small little way to make your python shell so much more convenient.dlo.me
+Shared by @myusuf3Python Bad Practice, A Concrete Case 
+Awesome run down of bad practice Python, with concrete examples!danjou.info
+Shared by @myusuf3Python Single Line For Loops 
+Nice introduction to list comprehensions here for the new Python programmer.teamtreehouse.com
+Shared by @mgrouchyGuido van Rossum On Finding His Way 
+The Python creator and Dropbox engineer reflects on his early days in programming.medium.com
+Shared by @myusuf3Tutorial I Wish I Had When Tackling AJAX and Django 
+Beginners tutorial on how to use AJAX and Django!wordpress.com
+Shared by @myusuf3Celery In Production 
+How Caktus Group uses Celery in production!

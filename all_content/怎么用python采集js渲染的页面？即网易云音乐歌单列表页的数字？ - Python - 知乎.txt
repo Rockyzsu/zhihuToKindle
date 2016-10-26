@@ -1,0 +1,84 @@
+
+
+
+怎么用python采集js渲染的页面？即网易云音乐歌单列表页的数字？ - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/39708612 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+请求这个地址: http://music.163.com/api/playlist/detail?id=<id>
+必要参数 id 为 歌单id，对应歌单的 url 里面的 id 就是这个参数啦然后得到的请求结果为一串 JSON 数据，用工具(JSON在线编辑)解析一下就能得到看到需要的数据了。其中字段：subscribedCount：收藏次数
+shareCount     ：分享次数
+commentCount   ：评论次数
+playCount      ：播放次数
+
+...
+比如这个歌单 网易云音乐 听见好时光 , id = 11362719GET请求 http://music.163.com/api/playlist/detail?id=11362719
+解析出 JSON 后得到数据收藏 23593分享 935评论 638播放 925246完。参考：网易云音乐常用API浅析
+
+
+-------------------------answer 0 via  -------------------------
+
+
+请求这个地址: http://music.163.com/api/playlist/detail?id=<id>
+必要参数 id 为 歌单id，对应歌单的 url 里面的 id 就是这个参数啦然后得到的请求结果为一串 JSON 数据，用工具(JSON在线编辑)解析一下就能得到看到需要的数据了。其中字段：subscribedCount：收藏次数
+shareCount     ：分享次数
+commentCount   ：评论次数
+playCount      ：播放次数
+
+...
+比如这个歌单 网易云音乐 听见好时光 , id = 11362719GET请求 http://music.163.com/api/playlist/detail?id=11362719
+解析出 JSON 后得到数据收藏 23593分享 935评论 638播放 925246完。参考：网易云音乐常用API浅析
+
+
+-------------------------answer 1 via  -------------------------
+
+
+<span class="time s-fc4">2013-02-07&nbsp;创建</span></div><div id="content-operation" class="btns f-cb" data-rid="152261" data-type="13" data-special="0"><a data-res-action="play" data-res-id="152261" data-res-type="13" href="javascript:;" class="u-btn2 u-btn2-2 u-btni-addply f-fl" hidefocus="true" title="播放"><i><em class="ply"></em>播放</i></a><a data-res-action="addto" data-res-id="152261" data-res-type="13" href="javascript:;" class="u-btni u-btni-add" hidefocus="true" title="添加到播放列表"></a><a data-res-id="152261" data-res-type="13" data-count="420649" data-res-action="fav" class="u-btni u-btni-fav " href="javascript:;"><i>(42万)</i></a>http://p3.music.126.net/C4F_cFkqS6u_7x6hJKursQ==/7812030116003837.jpg" class="u-btni u-btni-share " href="javascript:;">(15126)<a data-res-id="152261" data-res-type="13" data-res-action="download" class="u-btni u-btni-dl " href="javascript:;"><i>下载</i></a><a data-res-action="comment" href="javascript:;" class="u-btni u-btni-cmmt "><i>(<span id="cnt_comment_count">11649</span>)</i></a></div>看其中<i>(42万)</i> (15126)11649
+
+
+-------------------------answer 2 via  -------------------------
+
+
+关键在这句吧改为browser.switch_to.frame(browser.find_element_by_xpath("//iframe"))title = browser.find_elements_by_xpath('//*[@id="play-count"]')---------- python2 ----------8800646参考:selenium - Web Scraping : Getting HTML source generated from JSP using Python
+
+
+-------------------------answer 3 via  -------------------------
+
+
+大兄弟 我觉得首先你得学会如何抓包……这并不是一个浏览器解析js生成内容的网页……就一个比较简单的办法吧 以后遇到这种网页不确定到底是ajax交互还是服务器返回的整个网页 比如chrome 就按f12 点开network一栏 刷新页面 就能看见请求的整个过程如果你不知道你需要的数据在哪里 把所有请求的内容都看一眼 发现数据在哪里你就去请求什么很明显这个才是你需要的请求嘛……很明显这个才是你需要的请求嘛……就举个例子说播放次数吧……就这样就举个例子说播放次数吧……就这样
+
+
+-------------------------answer 4 via  -------------------------
+
+
+js的数据之所以没办法直接从网页请求响应的源码中获取，原因就是源码中并没有数据，从网页展示的原理上讲，js会在网页渲染的过程中运行代码逻辑，并有可能修改网页内容。也就是说，你获取了js运行之前的html源码，这里可能没有你要的数据，但是在浏览器运行js代码后，数据就会被计算出来并且显示在网页中。要获取此类js数据，一般有两种途径，一种比较简单的就是使用浏览器加载网页，然后从浏览器中提取，因为浏览器会自动运行js，所以这种就不管什么js数据或者什么数据都可以一样的提取，可以说不用关心js。八爪鱼采集器就是使用这种方式的。第二种途径比较复杂，即通过分析js源代码，寻找里面的逻辑关系，一般来说js会负责请求服务器，获取数据，然后修改网页并将数据显示出来。通过编写python或者其他语言代码，模拟该请求，截取数据即可，因为每个网页的js代码都不一样，请求的参数和响应的数据内容格式也都不一样，因此需要case by case的分析，此外一般需要使用网络抓包工具辅助。
+
+
+-------------------------answer 5 via  -------------------------
+
+
+用python的话建议用lxml,用chrome打开然后按F12右键选择import lxml.html.soupparser as soupparser
+def createDomTree(url):
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)
+    dom = soupparser.fromstring(response)
+    return dom
+
+def getCount(url):
+    dom = createDomTree(url)
+    count = dom.xpath('节点的xpath地址')
+
+然后就可以惹
+

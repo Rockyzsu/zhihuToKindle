@@ -1,0 +1,36 @@
+
+
+
+scrapy如何获取动态加载页面的url? - 网站 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/30487688 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+例如： http://music.baidu.com/top/dayhot，如何获得下一页歌单的链接，网页使用了ajax动态加载，点击下一页后的网页url是不变的，页面元素下观察求赐教
+
+-------------------------answer 0 via  -------------------------
+
+
+你再看看，它数据是如何加载的import jsonx = json.loads(response.xpath("//li[@class='  bb-dotimg clearfix  song-item-hook  ']")[11].xpath("./@data-songitem").extract()[0])print(x['songItem']['sname'])
+
+
+-------------------------answer 1 via  -------------------------
+
+
+动态页面请使用 spynner，内置 webkit 引擎
+
+
+-------------------------answer 2 via  -------------------------
+
+
+题主，我和你遇见了同样的问题，请问你解决了吗？

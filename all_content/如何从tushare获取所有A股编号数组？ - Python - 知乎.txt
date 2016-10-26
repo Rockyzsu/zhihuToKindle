@@ -1,0 +1,24 @@
+
+
+
+如何从tushare获取所有A股编号数组？ - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/47491598 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+如上图，使用df = ts.get_stock_basics()得到DataFrame,需要的A股编号全部在Index里面，如何把Index存的变成可用的np数组？
+
+-------------------------answer 0 via  -------------------------
+
+
+stock_info=ts.get_stock_basics()def get_all_stock_id():    #获取所有股票代码    for i in stock_info.index:        print ihttp://www.30daydo.com/article/13

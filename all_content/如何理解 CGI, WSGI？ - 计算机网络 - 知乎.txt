@@ -1,0 +1,88 @@
+
+
+
+如何理解 CGI, WSGI？ - 计算机网络 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/19998865 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+
+
+-------------------------answer 0 via  -------------------------
+
+
+WSGI, Web Server Gateway Interface如全称代表的那样，WSGI不是服务器，不是API，不是Python模块，更不是什么框架，而是一种服务器和客户端交互的接口规范！更具体的规范说明请搜索“PEP 3333”。在WSGI规范下，web组件被分成三类：client, server, and middleware.WSGI apps(服从该规范的应用)能够被连接起来(be stacked)处理一个request，这也就引发了中间件这个概念，中间件同时实现c端和s端的接口，c看它是上游s，s看它是下游的c。WSGI的s端所做的工作仅仅是接收请求，传给application（做处理），然后将结果response给middleware或client.除此以外的工作都交给中间件或者application来做。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+正好最近在学习CGI。CGI是比较原始的开发动态网站的方式。你可以想象一下，一个网站的动态内容肯定是程序生成的，光是静态的html页面无法达到这个效果。那么，这个程序就需要接受客户端的请求，然后进行相应处理，再返回给客户端，客户端和服务端的通信当然是通过HTTP协议。然后我们会发现，这个程序在处理客户端请求的时候，大部分时候会进行很多重复的工作，比如说HTTP请求的解析。也就是说，你的程序需要解析HTTP请求，我的程序也需要解析。于是为了DRY原则，Web服务器诞生了。（以下所说的都是CGI的工作模式）于是Web服务器可以解析这个HTTP请求，然后把这个请求的各种参数写进进程的环境变量，比如REQUEST_METHOD，PATH_INFO之类的。之后呢，服务器会调用相应的程序来处理这个请求，这个程序也就是我们所要写的CGI程序了。它会负责生成动态内容，然后返回给服务器，再由服务器转交给客户端。服务器和CGI程序之间通信，一般是通过进程的环境变量和管道。这样做虽然很清晰，但缺点就是每次有请求，服务器都会fork and exec，每次都会有一个新的进程产生，开销还是比较大的。原因在与CGI程序是一个独立的程序，它是可以独立运行的（在提供HTTP请求的情况下），它可以用几乎所有语言来写，包括perl，c，lua，python等等。所以对于一个程序，服务器只能以fork and exec的方式来调用它了。我所理解的CGI差不多就是这样。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+cgi是通用网关接口，是连接web服务器和应用程序的接口。web服务器负责接收http请求，但是http请求从request到response的过程需要有应用程序的逻辑处理，web服务器一般是使用C写的，比如nginx，apache。而应用程序则是由各种语言编写，比如php，java，python等。这两种语言要进行交互就需要有个协议进行规定，而cgi就是这么个网关协议。拿nginx+fastcgi+php为例子，nginx里面的fastcgi模块实现cgi的客户端，php的cgi-sapi实现cgi的服务端。WSGI就是Python的CGI包装，相对于Fastcgi是PHP的CGI包装
+
+
+-------------------------answer 3 via  -------------------------
+
+
+简单看了一下PEP-0333，谈谈个人见解：WSGI里的组件分为『Server』，『Middleware』和『Application』三种，其中的『Middleware』是『设计模式』里的Decorator（装饰器）。WSGI规范在PEP-333里讲得很详细：PEP 0333 -- Python Web Server Gateway Interface v1.0 ，但我觉得比理解规范更重要的，是理解其设计目的和工作原理。WSGI规范写得有点绕，之所以绕， 主要原因可能是没有用『类型提示（Type Hints）』，如果用强类型OOP语言的那种『Interface』和『UML』来解释会清晰很多。下面我试试用这种带有『类型提示』的风格简单讲讲WSGI的原理。首先是『Application』如果把它算作接口的话，它 要能被直接调用（Callable），换句话说，它应该是一个函数或者定义了『__call__』方法的对象，『__call__』方法的签名是这样的：def __call__(environ: Dict[String, Any], 
+start_response: (String, List) -> Any)): Iterable[String]
+为了便于叙述，这里用的『类型提示』没有严格遵从Python语法。这里大致的意思是 __call__ 方法需要两个参数，『environ』是一个键（Key）为 String 类型，值（Value）为 任意（Any）类型的字典，『start_response』则是一个函数（实际上为了兼容已有框架，它也可以是一个函数工厂，详见PEP-0333）。 __call__ 方法返回一个可迭代的对象。可以这样理解，如果想正确调用『Application』，就必须知道两样东西，『数据』和『上层处理方法』，『数据』是那个environ变量（CGI里就叫这个名字），『上层处理方法』是那个start_response 回调函数，这两个参数，须在Server调用Application的时候，传给Application。或者说Application依赖于『数据』和『上层处理方法』，这两个依赖由Server『注入』给Application（称作『依赖注入 DI』）。 容易困惑的一点是为什么『上层处理方法』要通过参数传给Application，直接在Server里处理好了，把处理好的结果传给Application不是更简单吗？的确这样做似乎也可以，不过把『上层处理方法』作为回调函数传给Application，可以由Application本身控制该方法的调用时机，是更加灵活的一种方案（称作『控制反转 IoC』）。接下来是『Middleware』为了简化代码，我们先把『Application』单独定义为一个类型：type Application = (Dict[String, Any], (String, List) -> Any)) -> 
+Iterable[String]
+其实就是前面那个 __call__ 方法的签名，至于Application究竟是什么，叫它『函数』，或者『实现了__call__方法的 对象』，『实现了__init__方法的类』都可以，总之都可以通过『Application()』去使用，我们暂且统称为『Callable对象』。『Middleware』本质上是一个『装饰器 Decorator』，和Application类似它也是一个『Callable对象』，如果它有『__call__』方法，其签名应该是这样的：def __call__(app: Application): transformedApp: Application
+这个Middleware返回的类型是一个被『装饰』过的Application（transformedApp变量），这个transformedApp所依赖的『environ』和『start_response』可以被当前Middleware所在上层的Server/Middleware所注入。再看 这个Middleware的参数，它也是一个Application（app变量），所以Middleware本身的一些附加的逻辑和数据也可以通过app的参数注入到下层的Application里。Middleware是可以嵌套使用的，比如有『mw1』和『mw2』两个Middleware和『app』一个Application，就可以通过mw1(mw2(app))
+返回一个新的Application，如果mw1和mw2是相互独立的，嵌套顺序理论上也可以互换。也可以使用Python的『Decorator』语法，直接装饰app：@mw1
+@mw2
+def app(environ, start_response):
+    ...
+最后是『Server』好像能说的不多，这一层更像是一个『适配器 Adapter』，比如PEP-0333里面给的例子就是一个『CGI』的Adapter。它从 os.environ 或 sys.stdin（CGI规定的输入方式） 中获取Request数据，自定义了start_response和write函数，在其中使用 sys.stdout（CGI规定的输出方式） 进行响应。它把environ和start_response传给Application进行调用，然后遍历Application返回的Iterable，使用write函数把结果写到sys.stdin里。 写进sys.stdin，其实就是和更上层的，也就是Web Server（例如Apache/Nginx）进行通讯，Web Server通过Socket获取到内容以后，就可以最终把Response返回给用户了。
+
+
+-------------------------answer 4 via  -------------------------
+
+
+cgi通过环境变量，输入输出流完成web server与处理逻辑的http协议的交互，由于是基于流方式，所以各种语言都可以写cgi程序。wsgi是将web server参数python化，封装为request对象传递给apllication命名的func对象并接受其传出的response参数，由于其处理了参数封装和结果解析，才有python世界web框架的泛滥，在python下，写web框架就像喝水一样简单:)
+
+
+-------------------------answer 5 via  -------------------------
+
+
+CGI(Common Gateway Interface)可以说是一种替代用户直接访问服务器上文件而诞生的一种“代理”，用户通过CGI来获取动态数据或文件等。从最原始的意义上来说，CGI是一种设计思想，其最早的实现是每次请求都直接调用操作系统来创建进程、销毁进程，这种程序虽然效率不高但是给WEB数据动态访问提供了很好的思路。现在经过改进的CGI效率已经大大提高，尤其是fastCGI等实现。而WSGI是Web Server Gateway Interface的简称，从名字上看和CGI一定有渊源。事实上，由于之前的CGI程序和编写WEB服务所用的语言往往是不同的（CGI用C，WEB用PHP等），WSGI的其中一个目的就是让用户可以用统一的语言编写前后端，WSGI参考了CGI的设计，对CGI的设计思想进行了进一步包装。参考：http://www.python.org/dev/peps/pep-0333/#the-server-gateway-side这么做执行效率当然不高，不过根据《黑客与画家》最后的预言，这些效率是值的牺牲了，未来谁知道呢。总结来说：1、CGI是一种为用户动态提供所需数据的设计思想，它有很多各种不同语言的实现。2、WSGI是Python对CGI进行的一种包装，核心使用Python实现，具体实现通常来说也需要使用Python，目前Django、Google webapp框架都实现了WSGI。 HTH.
+
+
+-------------------------answer 6 via  -------------------------
+
+
+一个HTTP请求过来，一直到最后返回一个页面，经过哪些环节。把整个流程梳理清楚了，才能真正的理解这几个概念的位置，以及他们之间的关系。有一篇很好的文章（WSGI、flup、fastcgi、web.py的关系），直接转贴（感谢原作者）Apache/lighttpd: 相当于一个request proxy，根据配置，把不同的请求转发给不同的server处理，例如静态的文件请求自己处理，这个时候它就像一个web server，对于fastcgi/python这样的请求转发给flup这样的Server/Gateway进行处理 flup: 一个用python写的web server，也就是cgi中所谓的Server/Gateway，它负责接受apache/lighttpd转发的请求，并调用你写的程序 (application)，并将application处理的结果返回到apache/lighttpdfastcgi: apache/lighttpd的一个模块，虽然flup可以作为一个独立的web server使用，但是对于浏览器请求处理一般都交给 apache/lighttpd处理，然后由apache/lighttpd转发给flup处理，这样就需要一个东西来把apache/lighttpd跟flup联系起来，这个东西就是fastcgi，它通过环境变量以及socket将客户端请求的信息传送给flup并接收flup返回的结果web.py: 应该说有了上面的东西你就可以开始编写你的web程序了，但是问题是你就要自己处理浏览器的输入输出，还有cookie、session、模板等各种各样的问题了，web.py的作用就是帮你把这些工作都做好了，它就是所谓的web framework，另外一个出名的是django，不过感觉太复杂了，web.py差不多就够用了WSGI : 除了flup Server/Gateway外还有很多其他人的写的Server/Gateway, 这个时候就会出问题了，如果你在flup上写了一个程序，现在由于各种原因你要使用xdly了，这个时候你的程序也许就要做很多痛苦的修改才能使用 xdly server了，WSGI就是一个规范，他规范了flup这个服务应该怎么写，应该使用什么方式什么参数调用你写的程序(application)等，当然同时也规范你的程序应该怎么写了，这样的话，只要flup跟xdly都遵守WSGI的话，你的程序在两个上面都可以使用了，flup就是一个WSGI server
+
+
+-------------------------answer 7 via  -------------------------
+
+
+CGI，一言以蔽之——协议。为了和普通的网络协议做区分，我们可以称之为接口协议。所谓协议就是各方约定，达成共识的一种规则。比如中国公路靠右行驶，这就是公路的协议。网络协议约定的是逐字节的含义，大家遵守，就能方便解析，理解。CGI约定的不是逐字节的语义，而是一个个kv（不完全是kv，但可以大概这么理解）。用一个不太恰当的比喻来形容，网络协议描述的单位是数组，而CGI接口协议描述的是map（或者说字典，或者说关联数组）。CGI是古老的web技术，在php这类动态网页语言出现之前承担过一个时期的历史任务。当时多是用perl或c来编写CGI程序。前端通过表单或其他东西可以向服务器（比如Apache）发送一个URL，以及额外的参数（get或post等请求类型及其参数，服务器的信息等等），还有cookie等信息。那么Apache在开启 了cgi模块以后可以将其发送给一个CGI程序，这个程序可以是各种语言，比如c++（或c语言）就是从环境变量中解析出这样请求的具体参数。然后向标准输出输出内容（比如cout了一段HTML代码），这些内容没有被打印到控制台上，而是最终响应给了你的浏览器，渲染出了网页。重要一点是CGI程序记得要自己先输出http报头哦。缺点是每一次向CGI发送请求，都会生成一个CGI进程，，这种就是所谓的fork-and-exec模式，也通常是导致并发瓶颈的症结。反向代理加上大型的的分布式系统可以一定程度上减轻这些压力。大浪淘沙，如今CGI几乎已经消失在了人们的视野中，然而它确实让你了解很多web底层知识的好工具。近年来由于fcgi的出现，一直以来被人们所诟病的fork-and-exec问题得到解决，使得CGI多少又浮出了一点水面。顺带一提，，腾讯几乎是是国内硕果仅存的使用c++和CGI做web后端（大部分业务，不过应该不是全部业务采用cgi）的公司了，这主要是由于历史原因吧。 大学生朋友们，如果应聘腾讯看到后台工程师的技能要求是c++，千万不要惊讶。。看到php是前端工程师的要求也别奇怪，毕竟c++直接cout出来HTML还是略蛋疼，php做这层view应该是一种高效的解决方案吧。当然不加php，前端直接对接后台c++也是不奇怪的，毕竟restful的风格走俏嘛!手机码字不易。
+
+
+-------------------------answer 8 via  -------------------------
+
+
+CGI是一种设计思想，其最早的实现是每次请求都直接调用操作系统来创建进程、销毁进程；但是cgi的实现也可以基于event模型，这样不必新建进程，甚至不必创建新的线程，从而使效率获得提升。具体过程：1、在创建socket后，将http_receiver作为通道event的处理函数，收取每个字符；catch {fileevent $channel readable [list http_receiver $channel $chost $cport]}2、在http_receiver中捕捉eof，完成http报文头的提取；在这里要同时处理认证，认证通过的给出cgi函数，并要将参数、ip地址、端口等都传到cgi函数：www_give_cgi $channel $channel $args $request $chost $cport  3、在cgi函数中根据ip地址、端口判断用户，并给出适合该用户的响应。
+
+
+-------------------------answer 9 via  -------------------------
+
+
+apache，nginx这些服务器，是静态服务器，也就是说，只能把本地的现成的html，css之类的东西传给浏览器。而如果我们想要做动态网站呢？（就是说我们希望返回的页面是通过用户请求的数据动态生成的，之前没有的）假设我们打算用python写，那么这个时候就有人提出了一个叫做WSGI的协议，告诉我们，大家要写动态网站的话，肯定会写一些输入用户请求，返回页面的函数，那么这些函数都按照WSGI规定的样子来写，这样的话，写函数的就专心写函数，不用管获取用户输入，输出生成页面的事，而写获取和输出的，不用管函数，这样大家就可以互相用代码了。比如一个动态网站的例子，apache+mod_wsgi+django，django是一个web框架，但也可以看成就是一个复杂一点的输入用户请求，返回页面的函数，并且满足WSGI里面的规定，而mod_wsgi就是apache的一个模块，这个模块让apache这个静态服务器可以帮满足WSGI规范的函数实现获取用户请求和输出页面的功能。所以，总结的话，WSGI就是一个规范，

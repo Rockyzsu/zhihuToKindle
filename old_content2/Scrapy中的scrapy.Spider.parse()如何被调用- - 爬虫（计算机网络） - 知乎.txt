@@ -1,0 +1,85 @@
+
+
+
+Scrapy中的scrapy.Spider.parse()如何被调用? - 爬虫（计算机网络） - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/30201428 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+正如我们知道的，parse()方法可以返回Request或者items，当返回Request时会被加入到调度队列中，当返回items时候会
+被pipelines调用。那么如果parse()返回的是Request，items怎么返回保存？Request对象接受一个参数 
+callback指定这个Request返回的网页内容解析函数，所以可以指定parse返回Request，然后指定另一个parse_item方法返
+回items，代码类似这样:def parse(self, response):    #do something    yield scrapy.Request(url, callback=self.parse_item)def parse_item(self, response):    # item[key] = value    yield item现在我有个问题是：假设我有个URL：http://www.a.com(这个url被预置在start_urls中)，在这个页面中嵌入的URL假设有http://www.1.a.com和http://www.2.a.com，而http://www.1.a.com中还有又包含其他的链接http://www.11.a.com，http://www.12.a.com,...，那么当http://www.a.com被
+调度并且解析的时候是调用parse函数，parse函数返回了本页面所包含url的Request并预置callback=parse_item，但是
+本页面的数据又如何获得？已经被预置为callback=parse_item的页面中如果还有其他url，又如何递归的去访问这些页面(因为
+parse_item仅仅返回items)？
+
+-------------------------answer 0 via  -------------------------
+
+
+可以用CrawlSpider + LinkExtractor 来实现根据不同的页面链接分别调用不同的parse函数进行处理
+
+
+-------------------------answer 1 via  -------------------------
+
+
+一、如何获取http://a.com中的url，同时也获取http://a.com页面中的数据可以直接在parse方法中将request和item一起“返回”，并不需要再指定一个parse_item例如：def parse(self, response):
+    #do something
+    yield scrapy.Request(url, callback=self.parse)
+
+    #item[key] = value
+    yield item
+二、关于返回request的时候，item如何保存因为使用的yield，而不是return。parse函数将会被当做一个生成器使用。scrapy会逐一获取parse方法中生成的结果，并判断该结果是一个什么样的类型。如果是request则加入爬取队列，如果是item类型则使用pipeline处理，其他类型则返回错误信息。具体见源代码scrapy1.0/core/scraper.py中：代码太多，而且详细的执行过程涉及到twisted框架，所以就只贴主要逻辑部分。#file:scrapy/core/scraper.py
+
+class Scraper(object):
+......
+def _process_spidermw_output(self,output,request,response,spider):
+    """Prcess each Request/Item (given in the output parameter) returned
+    from the given spider
+    """
+    #output就是parse或者是其他指定回调方法生成的结果。
+    #以下判断语句，就对output的类型进行判断并处理。
+
+    if isinstance(output,Resquest):
+
+        #将Request发送到引擎，之后交给引擎处理——进入爬取队列操作等等
+        self.crawl.engin.crawl(request=ouput,spider=spider) 
+
+    else isinstance(ouput,(BaseItem,dict)):
+	self.slot.itemproc_size += 1
+        
+        #itemproc是setting.py指定ItemPipelineManager实例，它会调用指定pipeline的  
+        #process_item方法处理item（output）。
+	dfd = self.itemproc.process_item(ouput,spider)
+
+	dfd.addBoth(self._itemproc_finished, output, response, spider)
+	return dfd
+    elif output is None:
+	pass
+    else:
+	logger.error(.....)
+......
+
+
+
+-------------------------answer 2 via  -------------------------
+
+
+初学scrapy，和你有同样的困惑，以下是我的解决方法，给你参考我认为scrapy可以分辨出你返回的什么，你可以先处理这个网页的items，然后yield他们，接着你可以继续把这个页面里的url，1.a 2.a什么的存入urls，然后封入Request返回，Request中的回掉写本函数自身。最后的结果是item和Request都返回了。具体为什么不是很清楚，可能需要看看scrapy的实现了
+
+
+-------------------------answer 3 via  -------------------------
+
+
+这里有一点线索Scrapy使用Selenium  
+  需要弄懂一个概念， 下载中间件 ，可以阅读下官方文档 下载器中间件(Downloader Middleware)

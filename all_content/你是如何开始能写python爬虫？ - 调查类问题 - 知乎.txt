@@ -1,0 +1,169 @@
+
+
+
+你是如何开始能写python爬虫？ - 调查类问题 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/21358581 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+看完了简明教程和笨办法学python，想写爬虫，无从做起，需要继续看什么书和练习
+
+-------------------------answer 0 via  -------------------------
+
+
+说说我的经历吧我最早是爬虾米，想看看虾米听的比较多的歌是哪些，就爬了虾米全站的歌曲播放数，做了个统计Python爬虫学习记录（1）——Xiami全站播放数统计过豆瓣动漫的评分分布豆瓣2100部动漫页面的网页源码(包括评分，导演，类型，简介等信息，附抓取代码)爬百度歌词，做LDAPython爬虫学习记录（2）——LDA处理歌词百度音乐带标签，作曲，演唱者，类别的歌词数据爬足彩网站所有盘口，找赢钱算法Python爬虫学习记录（4）——传说中的足彩倍投法。。好像也不是那么靠谱2011~2013.5全球所有足球比赛比分数据以及足彩各公司盘口初期不需要登录的网站比较简单，掌握http get post和urllib怎么模拟，掌握lxml、BeautifulSoup等parser库就可以了，多用firefox的firebug或者chrome的调试工具看浏览器是怎么发包的。上面都是不需要登录不需要下文件就可以做到的。之后你可能想要下载文件（图片，音乐，视频等），这个可以试试爬虾米歌曲Python爬虫学习记录（3）——用Python获取虾米加心歌曲，并获取MP3下载地址爬wallbase壁纸最近做了个avfun的视频排行，每天定时抓几次acfun，然后下载视频到服务器缓存。Python爬虫学习记录（5）——python mongodb + 爬虫 + web.py 的acfun视频排行榜202.120.39.152:8888然后你可能需要模拟用户登录，爬取需要登录的网站（比如人人，新浪微博）。如果只是小规模爬虫建议用浏览器cookie模拟登录Python爬虫学习记录（0）——Python 爬虫抓站 记录（虾米，百度，豆瓣，新浪微博）===========================想说的是，不要为了学而学，可以看看有什么以前觉着很麻烦的操作，是不是能用爬虫简化。爬下来的数据是不是有排序筛选分析的价值。2015-8-31，在csdn上更新了之前失效的百度空间链接，可能有些代码因为网站的改版不适用了，这里主要还是提供一些应用的想法。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+看了大部分回答不禁叹口气，主要是因为看到很多大牛在回答像“如何入门爬虫”这种问题的时候，一如当年学霸讲解题目，跳步无数，然后留下一句“不就是这样推嘛”，让一众小白菜鸟一脸懵逼。。作为一个0起步（之前连python都不会），目前总算掌握基础，开始向上进阶的菜鸟，深知其中的不易，所以我会在这个回答里，尽可能全面、细节地分享给大家从0学习爬虫的各种步骤，如果对你有帮助，请点赞~-------------------------------------------------------------------------------------------------#我要写爬虫！#Ver.1.2 #Based on: Python 2.7#Author:高野良#原创内容，转载请注明出处首先！你要对爬虫有个明确的认识，这里引用毛主席的思想：在战略上藐视：“所有网站皆可爬”：互联网的内容都是人写出来的，而且都是偷懒写出来的（不会第一页是a，下一页是8），所以肯定有规律，这就给人有了爬取的可能，可以说，天下没有不能爬的网站“框架不变”：网站不同，但是原理都类似，大部分爬虫都是从 发送请求——获得页面——解析页面——下载内容——储存内容 这样的流程来进行，只是用的工具不同在战术上重视：持之以恒，戒骄戒躁：对于初学入门，不可轻易自满，以为爬了一点内容就什么都会爬了，爬虫虽然是比较简单的技术，但是往深学也是没有止境的（比如搜索引擎等）！只有不断尝试，刻苦钻研才是王道！（为何有种小学作文即视感）||||V然后，你需要一个宏伟的目标，来让你有持续学习的动力（没有实操项目，真的很难有动力）我要爬整个豆瓣！...我要爬整个草榴社区！我要爬知乎各种妹子的联系方式*&^#%^$#||||V接着，你需要扪心自问一下，自己的python基本功吼不吼啊？吼啊！——OK，开始欢快地学习爬虫吧 ！不吼？你还需要学习一个！赶紧回去看廖雪峰老师的教程，2.7的。至少这些功能和语法你要有基本的掌握 ：list，dict：用来序列化你爬的东西切片：用来对爬取的内容进行分割，生成条件判断（if等）：用来解决爬虫过程中哪些要哪些不要的问题循环和迭代（for while ）：用来循环，重复爬虫动作文件读写操作：用来读取参数、保存爬下来的内容等||||V然后，你需要补充一下下面几个内容，作为你的知识储备：（注：这里并非要求“掌握”，下面讲的两点，只需要先了解，然后通过具体项目来不断实践，直到熟练掌握）1、网页的基本知识：基本的HTML语言知识（知道href等大学计算机一级内容即可）理解网站的发包和收包的概念（POST GET）稍微一点点的js知识，用于理解动态网页（当然如果本身就懂当然更好啦）2、一些分析语言，为接下来解析网页内容做准备NO.1 正则表达式：扛把子技术，总得会最基础的：NO.2 XPATH：高效的分析语言，表达清晰简单，掌握了以后基本可以不用正则参考：XPath 教程NO.3 Beautifulsoup：美丽汤模块解析网页神器,一款神器，如果不用一些爬虫框架（如后文讲到的scrapy），配合request，urllib等模块（后面会详细讲），可以编写各种小巧精干的爬虫脚本官网文档：Beautiful Soup 4.2.0 文档参考案例：||||V接着，你需要一些高效的工具来辅助（同样，这里先了解，到具体的项目的时候，再熟悉运用）NO.1 F12 开发者工具：看源代码：快速定位元素分析xpath：1、此处建议谷歌系浏览器,可以在源码界面直接右键看NO.2 抓包工具：推荐httpfox，火狐浏览器下的插件,比谷歌火狐系自带的F12工具都要好，可以方便查看网站收包发包的信息NO.3 XPATH CHECKER (火狐插件）：非常不错的xpath测试工具，但是有几个坑，都是个人踩过的，，在此告诫大家：1、xpath checker生成的是绝对路径，遇到一些动态生成的图标（常见的有列表翻页按钮等），飘忽不定的绝对路径很有可能造成错误，所以这里建议在真正分析的时候，只是作为参考2、记得把如下图xpath框里的“x:”去掉，貌似这个是早期版本xpath的语法，目前已经和一些模块不兼容（比如scrapy），还是删去避免报错NO.4 正则表达测试工具：在线正则表达式测试 ，拿来多练练手，也辅助分析！里面有很多现成的正则表达式可以用，也可以进行参考！||||Vok！这些你都基本有一些了解了，现在开始进入抓取时间，上各种模块吧！python的火，很大原因就是各种好用的模块，这些模块是居家旅行爬网站常备的——urlliburllib2requests||||V不想重复造轮子，有没有现成的框架？华丽丽的scrapy(这块我会重点讲，我的最爱）||||V遇到动态页面怎么办？selenium（会了这个配合scrapy无往不利，是居家旅行爬网站又一神器，下一版更新的时候会着重安利，因为这块貌似目前网上的教程还很少）||||V爬来的东西怎么用？pandas（基于numpy的数据分析模块，相信我，如果你不是专门搞TB级数据的，这个就够了）||||V然后是数据库，这里我认为开始并不需要非常深入，在需要的时候再学习即可mysqlmongodbsqllite||||V进阶技术多线程分布式V1.2更新日志：
+修改了一些细节和内容顺序
+
+
+
+-------------------------answer 2 via  -------------------------
+
+
+如何学习Python爬虫[入门篇]？ - 学习编程 - 知乎专栏学习爬虫时候用的一些资料恰好整理在这篇文章里面了，不再贴了。后面根据以下实例又做了很多练习。实例一：那啥，源码解读下载GitHub - xkaifei/Ano-Bbs-Browser-Python-Script: 用python命令行来浏览a岛的脚本，学习python练手作实例二：抓取淘宝照片，源码解读下载Python爬虫实战（4）：抓取淘宝MM照片实例三：抓取淘宝订单，源码解读下载  Python爬虫实战（5）：模拟登录淘宝并获取所有订单实例四：微信开发，源码解读下载使用python一步一步搭建微信公众平台（一）使用python一步一步搭建微信公众平台（二）----搭建一个中英互译的翻译工具使用python一步一步搭建微信公众平台（三）----添加用户关注后的欢迎信息与听音乐功能使用python一步一步搭建微信公众平台（四）----将小黄鸡引入微信自动回复使用python一步一步搭建微信公众平台（五）----使用mysql服务来记录用户的反馈实例五：爬取知乎，源码解读下载Welcome to zhihu-py3’s documentation! （建议通读源码）实例六：模拟登录一些主流网站，源码下载GitHub - xchaoinfo/fuck-login: 模拟登录一些知名的网站，为了方便爬取需要登录的网站 实例六：多个实例源码，更多请访问主页@华天清Python爬虫实战（2）：爬取京东商品列表Python爬虫实战（3）：安居客房产经纪人信息采集实例七：豆瓣爬取实例，源码下载GitHub - dontcontactme/doubanspiders: 豆瓣电影、书籍、小组、相册、东西等爬虫集 writen in Python以及最近自己做的一个实例Python对微信好友进行简单统计分析 - 学习编程 - 知乎专栏
+
+
+-------------------------answer 3 via  -------------------------
+
+
+动机上：我想把学校教育系统课程信息爬下来 操作上：先了解 HTTP协议，然后学习使用 Python Requests模块，再实战。练习上：先在终端直接操作，试着抓抓http://www.baidu.com，再把自己写的爬虫发布到PIPy…然后，把教务系统2学期2000+门课抓下来，还尝试攻击了一个小伙伴的网站…把它搞挂啦！具体可以看这篇博客，写一个 Python 爬虫https://jenny42.com/2015/02/write-a-spider-use-python/突然发现我这个其实不算爬虫，顶多算抓取网页。因为我没有学 xPath 和 CSSSelect 那些东西，没有把网站爬个遍…你会发现，尽管我的爬虫技术还很烂…但是我做的大部分尝试都是有反馈的，比如发布模块可以看到下载次数(心想着这种坑爹模块也有人下载啊)，抓教务系统数据很好玩(我发现全校有250个左右的同学重名)…把小伙伴的网站搞垮再去报Bug…但我觉得这样学习很有趣。而且我觉得我对之后学：怎么抓需要验证码的网站，怎么把网站爬个遍之类的进阶技能也很感兴趣～
+
+
+-------------------------answer 4 via  -------------------------
+
+
+第一个爬虫是为了下载皮皮书屋（http://www.ppurl.com/， 已不可访问）上的电子书而写的。相信比较老的工程师应该听过这个网站（Google找的图片，侵删）：页面很清晰简单：当时就是在w3school学了基本的HTML知识，然后靠firebug自己琢磨（现在可以用chrome的）。我第二个爬虫其实是面试的题目（难道没人和我一个情况么），就是这个 爬虫练习 - 小明明s à domicile，顺便学了XPath，算是懵懂的入门了。应该到这里就算「能写」python爬虫了，而且那个时候requests在国内还基本没有名气，都是手写一大坨。这个时候我已经有如下积累：1. 对HTML有基本的了解。2. 对HTTP协议有基本的了解，如HTTP状态码、代理、头信息、cookie、User-Agent等。3. 熟悉正则表达式的使用。4. 了解bs4和lxml等解析库。5. 熟悉XPath。6. 了解多线程和多进程模块的使用。再之后，由于工作原因需要大量的抓取新浪微博、腾讯微博、网易微博信息，而它们提供的开放平台的高级权限也满足不了业务需要，又写了一些爬虫。楼上那多人说，都说的太简陋，没什么营养，我写出来给正好遇到此类问题的同学参考：1. pyv8。Google开源的javascript引擎，pyv8是对应的Python封装，我当时做腾讯微博登录需要执行javascript函数时使用。2. Selenium。本来它是用作测试自动化的，说白了就是在一个安装了图形界面的系统上启动浏览器执行一系列预先安排的工作，并检验是不是符合预期，但结果被爬虫爱好者经常用于爬虫，对于javascript生成的动态内容不好获取的，就用它来「迂回」的实现，缺点是比较耗费机器资源，也不好管理。我之前用它替代pyv8进行腾讯微博登录，用了几百台云服务器.... 3. PhantomJS。它无需浏览器的情况下进行快速的Web测试，我现在还会用它截图。由于它是javascript编写的，不算是Python的爬虫了，所以一般和selenium搭配使用 ：from selenium import webdriver
+
+
+driver = webdriver.PhantomJS('/usr/local/Cellar/node/6.4.0/lib/node_modules/phantomjs/bin/phantomjs')
+driver.get('https://www.douban.com/')
+
+driver.save_screenshot('douban_screenshot.png')  # 页面截图
+sbtn = driver.find_element_by_css_selector('input.bn-submit')
+print sbtn
+4. 和一些好友聊爬虫的时候，听到了 https://github.com/jeanphix/Ghost.py 。安装PySide一直是一个坑，推荐使用PySide 1.2.4 still finding dylib properly (non-virtualenv set up) · Issue #138 · PySide/PySide · GitHub中提到的第一种方式。
+
+
+-------------------------answer 5 via  -------------------------
+
+
+Python入门网络爬虫之精华版Python学习网络爬虫主要分3个大的版块：抓取，分析，存储另外，比较常用的爬虫框架Scrapy，这里最后也详细介绍一下。首先列举一下本人总结的相关文章，这些覆盖了入门网络爬虫需要的基本概念和技巧：宁哥的小站-网络爬虫当我们在浏览器中输入一个url后回车，后台会发生什么？比如说你输入宁哥的小站（fireling的数据天地）专注网络爬虫、数据挖掘、机器学习方向。，你就会看到宁哥的小站首页。简单来说这段过程发生了以下四个步骤：查找域名对应的IP地址。向IP对应的服务器发送请求。服务器响应请求，发回网页内容。浏览器解析网页内容。网络爬虫要做的，简单来说，就是实现浏览器的功能。通过指定url，直接返回给用户所需要的数据，而不需要一步步人工去操纵浏览器获取。抓取这一步，你要明确要得到的内容是什么？是HTML源码，还是Json格式的字符串等。1. 最基本的抓取抓取大多数情况属于get请求，即直接从对方服务器上获取数据。首先，Python中自带urllib及urllib2这两个模块，基本上能满足一般的页面抓取。另外，requests也是非常有用的包，与此类似的，还有httplib2等等。Requests：
+    import requests
+    response = requests.get(url)
+    content = requests.get(url).content
+    print "response headers:", response.headers
+    print "content:", content
+Urllib2：
+    import urllib2
+    response = urllib2.urlopen(url)
+    content = urllib2.urlopen(url).read()
+    print "response headers:", response.headers
+    print "content:", content
+Httplib2：
+    import httplib2
+    http = httplib2.Http()
+    response_headers, content = http.request(url, 'GET')
+    print "response headers:", response_headers
+    print "content:", content
+此外，对于带有查询字段的url，get请求一般会将来请求的数据附在url之后，以?分割url和传输数据，多个参数用&连接。data = {'data1':'XXXXX', 'data2':'XXXXX'}
+Requests：data为dict，json
+    import requests
+    response = requests.get(url=url, params=data)
+Urllib2：data为string
+    import urllib, urllib2    
+    data = urllib.urlencode(data)
+    full_url = url+'?'+data
+    response = urllib2.urlopen(full_url)
+相关参考：网易新闻排行榜抓取回顾参考项目：网络爬虫之最基本的爬虫：爬取网易新闻排行榜2. 对于登陆情况的处理2.1 使用表单登陆这种情况属于post请求，即先向服务器发送表单数据，服务器再将返回的cookie存入本地。data = {'data1':'XXXXX', 'data2':'XXXXX'}
+Requests：data为dict，json
+    import requests
+    response = requests.post(url=url, data=data)
+Urllib2：data为string
+    import urllib, urllib2    
+    data = urllib.urlencode(data)
+    req = urllib2.Request(url=url, data=data)
+    response = urllib2.urlopen(req)
+2.2 使用cookie登陆使用cookie登陆，服务器会认为你是一个已登陆的用户，所以就会返回给你一个已登陆的内容。因此，需要验证码的情况可以使用带验证码登陆的cookie解决。import requests            
+requests_session = requests.session() 
+response = requests_session.post(url=url_login, data=data)
+若存在验证码，此时采用response = requests_session.post(url=url_login, data=data)是不行的，做法应该如下：response_captcha = requests_session.get(url=url_login, cookies=cookies)
+response1 = requests.get(url_login) # 未登陆
+response2 = requests_session.get(url_login) # 已登陆，因为之前拿到了Response Cookie！
+response3 = requests_session.get(url_results) # 已登陆，因为之前拿到了Response Cookie！
+相关参考：网络爬虫-验证码登陆参考项目：网络爬虫之用户名密码及验证码登陆：爬取知乎网站3. 对于反爬虫机制的处理3.1 使用代理适用情况：限制IP地址情况，也可解决由于“频繁点击”而需要输入验证码登陆的情况。这种情况最好的办法就是维护一个代理IP池，网上有很多免费的代理IP，良莠不齐，可以通过筛选找到能用的。对于“频繁点击”的情况，我们还可以通过限制爬虫访问网站的频率来避免被网站禁掉。proxies = {'http':'http://XX.XX.XX.XX:XXXX'}
+Requests：
+    import requests
+    response = requests.get(url=url, proxies=proxies)
+Urllib2：
+    import urllib2
+    proxy_support = urllib2.ProxyHandler(proxies)
+    opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler)
+    urllib2.install_opener(opener) # 安装opener，此后调用urlopen()时都会使用安装过的opener对象
+    response = urllib2.urlopen(url)
+3.2 时间设置适用情况：限制频率情况。Requests，Urllib2都可以使用time库的sleep()函数：import time
+time.sleep(1)
+3.3 伪装成浏览器，或者反“反盗链”有些网站会检查你是不是真的浏览器访问，还是机器自动访问的。这种情况，加上User-Agent，表明你是浏览器访问即可。有时还会检查是否带Referer信息还会检查你的Referer是否合法，一般再加上Referer。headers = {'User-Agent':'XXXXX'} # 伪装成浏览器访问，适用于拒绝爬虫的网站
+headers = {'Referer':'XXXXX'}
+headers = {'User-Agent':'XXXXX', 'Referer':'XXXXX'}
+Requests：
+    response = requests.get(url=url, headers=headers)
+Urllib2：
+    import urllib, urllib2   
+    req = urllib2.Request(url=url, headers=headers)
+    response = urllib2.urlopen(req)
+4. 对于断线重连不多说。def multi_session(session, *arg):
+    retryTimes = 20
+    while retryTimes>0:
+        try:
+            return session.post(*arg)
+        except:
+            print '.',
+            retryTimes -= 1
+或者def multi_open(opener, *arg):
+    retryTimes = 20
+    while retryTimes>0:
+        try:
+            return opener.open(*arg)
+        except:
+            print '.',
+            retryTimes -= 1
+这样我们就可以使用multi_session或multi_open对爬虫抓取的session或opener进行保持。5. 多进程抓取这里针对华尔街见闻进行并行抓取的实验对比：Python多进程抓取 与 Java单线程和多线程抓取相关参考：关于Python和Java的多进程多线程计算方法对比6. 对于Ajax请求的处理对于“加载更多”情况，使用Ajax来传输很多数据。它的工作原理是：从网页的url加载网页的源代码之后，会在浏览器里执行JavaScript程序。这些程序会加载更多的内容，“填充”到网页里。这就是为什么如果你直接去爬网页本身的url，你会找不到页面的实际内容。这里，若使用Google Chrome分析”请求“对应的链接(方法：右键→审查元素→Network→清空，点击”加载更多“，出现对应的GET链接寻找Type为text/html的，点击，查看get参数或者复制Request URL)，循环过程。如果“请求”之前有页面，依据上一步的网址进行分析推导第1页。以此类推，抓取抓Ajax地址的数据。对返回的json格式数据(str)进行正则匹配。json格式数据中，需从'\uxxxx'形式的unicode_escape编码转换成u'\uxxxx'的unicode编码。7. 自动化测试工具SeleniumSelenium是一款自动化测试工具。它能实现操纵浏览器，包括字符填充、鼠标点击、获取元素、页面切换等一系列操作。总之，凡是浏览器能做的事，Selenium都能够做到。这里列出在给定城市列表后，使用selenium来动态抓取去哪儿网的票价信息的代码。参考项目：网络爬虫之Selenium使用代理登陆：爬取去哪儿网站8. 验证码识别对于网站有验证码的情况，我们有三种办法：使用代理，更新IP。使用cookie登陆。验证码识别。使用代理和使用cookie登陆之前已经讲过，下面讲一下验证码识别。可以利用开源的Tesseract-OCR系统进行验证码图片的下载及识别，将识别的字符传到爬虫系统进行模拟登陆。当然也可以将验证码图片上传到打码平台上进行识别。如果不成功，可以再次更新验证码识别，直到成功为止。参考项目：Captcha1爬取有两个需要注意的问题：如何监控一系列网站的更新情况，也就是说，如何进行增量式爬取？对于海量数据，如何实现分布式爬取？分析抓取之后就是对抓取的内容进行分析，你需要什么内容，就从中提炼出相关的内容来。常见的分析工具有正则表达式，BeautifulSoup，lxml等等。存储分析出我们需要的内容之后，接下来就是存储了。我们可以选择存入文本文件，也可以选择存入MySQL或MongoDB数据库等。存储有两个需要注意的问题：如何进行网页去重？内容以什么形式存储？ScrapyScrapy是一个基于Twisted的开源的Python爬虫框架，在工业中应用非常广泛。相关内容可以参考基于Scrapy网络爬虫的搭建，同时给出这篇文章介绍的微信搜索爬取的项目代码，给大家作为学习参考。参考项目：使用Scrapy或Requests递归抓取微信搜索结果
+
+
+-------------------------answer 6 via  -------------------------
+
+
+某日，打开《什么值得买》，这是一个神奇的网站。偶然间，看到维多利亚的秘密、真人秀，等关键词，觉得貌似可以做点什么。于是，学下Python，撸了个单线程爬虫（很慢- -）。从撸好到现在，爬了：其中，含“真人”关键词的，有：我们按照点赞数、评论数排个序：然后，点开邪恶的 images 字段：嗯。。可以做点什么了。等数据全部爬完了，准备写个前端页面，方便浏览。另，用http://socket.io写了个简陋的日志监控：综上，要开始能写爬虫，需要一个动手的动机，因人而异。。
+
+
+-------------------------answer 7 via  -------------------------
+
+
+不知题主的编程基础如何，基本上想写Python爬虫只需要看下前人的日志学习下urllib和BeautifulSoup就够用了。另外如果有千人的实际例子看一下应该能比较直观的明白一个爬虫是怎么跑起来的。在下不才，写过一个爬知乎数据的爬虫，开源于（各位亲走过路过的时候请给点个Star或Fork呗~）：MorganZhang100/zhihu-spider · GitHub该爬虫爬到的数据应用于：http://zhihuhot.sinaapp.com/简单点说就是一个爬取问题的一些参数，进行分析，找出最可能会火的问题。据此回答问题的话，得赞速度比之前多20倍左右。我对Python也不是很熟悉，不过一共只有几百行的代码，题主看看应该问题不大。其实学任何东西，看得教程再多也比不上自己实习写几行代码来得有效果。只要开始写了，你就知道你需要什么了。
+
+
+-------------------------answer 8 via  -------------------------
+
+
+https://github.com/lizherui/spider_python
+
+
+-------------------------answer 9 via  -------------------------
+
+
+其实开始动手就好了~先找个想爬的网页，比如豆瓣电影TOP250，然后urllib2打开网页，beautifulsoup解析html，结合正则表达式抓取你所需要的字段，最后写入文件（print出来也没意见，新手嘛哈哈）爬虫入门并不难哈哈~如果想深入一点，可以学习scrapy，看初窥Scrapy（中文文档），把你之前写的爬虫放到框架中试试吧~PS：我也是新新新新新手，感兴趣所以开始学了一点点，欢迎交流哈~PPS：欢迎光临ztybuaa (朱天宇) · GitHub 我写的豆瓣电影Top250爬虫（大神们请无视我~），写的并不好，请见谅哈~

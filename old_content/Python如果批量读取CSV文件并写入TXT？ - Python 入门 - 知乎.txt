@@ -1,0 +1,57 @@
+
+
+
+Python如果批量读取CSV文件并写入TXT？ - Python 入门 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/39299070 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+1、文件夹 mycsv 有多个 .CSV 文件。2、.CSV文件有二个列：AAA，BBB3、读取所有CSV文件的BBB列4、如果值为ok，就把这行对应AAA列中的内容，另存入A.txt文件中。谢谢哈！
+
+-------------------------answer 0 via  -------------------------
+
+
+用python csv模块 写一个函数 读csv 写text
+>>> import csv
+>>> with open('names.csv') as csvfile:
+...     reader = csv.DictReader(csvfile)
+...     for row in reader:
+...         print(row['first_name'], row['last_name'])
+...
+Baked Beans
+Lovely Spam
+Wonderful Spam
+
+用glob 读当前目录下所有的csv文件，读到一个list，再循环调用上面的函数。
+import glob
+lst = glob.glob("*.csv")
+print lst
+
+
+
+-------------------------answer 1 via  -------------------------
+
+
+这个使用读取excel的方法一样的。excel的内容需要有规律，python才能按顺序读取出来。 比如按行按列读取。一、安装xlrd模块   到python官网下载http://pypi.python.org/pypi/xlrd模块安装，前提是已经安装了python 环境。二、使用介绍  1、导入模块      import xlrd   2、打开Excel文件读取数据       data = xlrd.open_workbook('excelFile.xls')   3、使用技巧        获取一个工作表        table = data.sheets()[0]          #通过索引顺序获取        table = data.sheet_by_index(0) #通过索引顺序获取        table = data.sheet_by_name(u'Sheet1')#通过名称获取        获取整行和整列的值（数组）         table.row_values(i)         table.col_values(i)        获取行数和列数        nrows = table.nrows        ncols = table.ncols        循环行列表数据        for i in range(nrows ):      print table.row_values(i)单元格cell_A1 = table.cell(0,0).valuecell_C4 = table.cell(2,3).value使用行列索引cell_A1 = table.row(0)[0].valuecell_A2 = table.col(1)[0].value简单的写入row = 0col = 0# 类型 0 empty,1 string, 2 number, 3 date, 4 boolean, 5 errorctype = 1 value = '单元格的值'xf = 0 # 扩展的格式化table.put_cell(row, col, ctype, value, xf)table.cell(0,0)  #单元格的值'table.cell(0,0).value #单元格的值'原文地址python 读取写入excel文件
+
+
+-------------------------answer 2 via  -------------------------
+
+
+#pip install pandas
+import pandas as pd
+df = pd.read_csv('xxx.csv')
+df.query('BBB=="ok"').loc[:, 'AAA'].to_csv('new_xxx.csv')
+
+#csv其实就是逗号分隔的文本而已
+

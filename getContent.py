@@ -111,6 +111,18 @@ class GetContent():
             k += 1
             index = index + 1
 
+
+        #点击更多按钮的bug
+        #构造header
+        reqest_url={'Request URL':'https://www.zhihu.com/node/QuestionAnswerListV2'}
+        request_url='https://www.zhihu.com/node/QuestionAnswerListV2'
+        #ref={'Referer':'https://www.zhihu.com/question/50737023'}
+        params={"url_token":,"pagesize":"10","offset":20}
+        data={'method':'next',}
+
+
+'
+
         smtp_server = 'smtp.126.com'
         from_mail = 'your@126.com'
         password = 'yourpassword'

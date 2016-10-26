@@ -1,0 +1,82 @@
+
+
+
+为什么微信不使用GCM服务推送消息？ - Android - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/21514839 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+使用GCM推送服务的whatsapp即使后台程序和服务都关闭掉，也依然可以在第一时间接收到新消息的推送（实测在国内whatsapp也的确可以在后台关闭的情况下正常通过GCM接受实时消息）同样是IM软件，为何微信不使用GCM的机制而要自己开启一个Service常驻后台轮询，并且还要使用多种方式触发该Service导致无法关闭，这种机制既耗电又浪费网络资源，微信放弃成熟的GCM推送机制而使用自身后台服务的软件是否有其他自身目的性？还是说微信某些功能必须自身常驻呢？有网友回答说考虑到某些网络运营商的问题，GCM可能有不稳定性，但开发APP的时候就在网络连接这里增加一个用户可选的通过GCM进行推送的选项（默认可以使用程序自身Service），我想这样对于大多数3G网络用户来说更人性化一点吧，我的设备上安装的IM和社交工具及带推送的服务软件十来款，都在后台以Service运行，现在手机感觉越用越费电，查看后台CPU唤醒发现几乎每个APP的后台Service都会每隔几分钟唤醒一次系统联网轮询，由于各个软件的轮询设置和服务设置不一，手机在不使用的待机状态下，几乎有一半以上额时间都是处于被各种服务唤醒状态而非进入休眠，待机状态下1小时都要掉电近10%，这很伤不起，腾讯的微信作为国内IM的老大，应该更为用户体验做考虑才对。
+
+-------------------------answer 0 via  -------------------------
+
+
+Play 商店版微信 V5.3.1 已经开始使用 GCM 服务了。
+
+
+-------------------------answer 1 via  -------------------------
+
+
+先不提4.0之前必须登录google账户才能用，gcm容易撞墙，容易被rom删掉。到达率50%还是80%还是90%又如何？不是100%就没法用。即使是100%的android手机都有，偶尔墙一下也受不了，G。F。W的行为你是未知的，没必要赌这个。同时维护两套消息推送机制也很麻烦，只选一个必然要自己搞，有人提到的WHATSAPP、LINE、Gmail等等，这些app国内没多少人用，用这些东西的人应该也很少用被深度定制了的系统。纯国内大厂的app有谁用gcm？没必要针对微信吐槽腾讯如何如何。另外，gcm的网络机制不是很适合国内的网络。之前有人写过一篇文章讲为何微信导致移动的基站负载变高之类的。大概是说移动的数据通信会把长时间不传数据的长连接关掉，避免这个的办法就是降低心跳间隔，gcm的默认心跳间隔不清楚是多少，但绝对比微信自己的长。导致gcm的连接容易被断掉从而收消息有延迟。我之前用android上的gtalk感触很大，用固定宽带的wifi聊天，收到消息很及时，换数据流量上网，经常会出现一两分钟没收到消息然后一下收到好几条的情况。耗电量和即时性确实是个折衷的东西，你可能认为微信晚一分钟收到消息但省电1%挺好，但未必所有人都这么认为。
+
+
+-------------------------answer 2 via  -------------------------
+
+
+声明：我是非常喜欢用GCM推送的1.国行的机器基本没有GSM服务包，缺系统组件 不是每个人都玩得转2.国内因为和谐因素 推送有时会被墙，虽然我没有遇到过
+
+
+-------------------------answer 3 via  -------------------------
+
+
+1. GCM国内什么时候挂不确定2. 反正Android不禁止后台Service，那么开一个又何妨
+
+
+-------------------------answer 4 via  -------------------------
+
+
+其实问题描述的问题，我了解到的是都考虑过的，在反问楼主几个问题：1、国内支持GCM的机型占比多少？2、不支持的是否需要兼容模式？3、主动关闭了GCM机器有多少？4、全国各地网络GCM的响应时间和成功率是多少？5、GCM服务器自身可靠程度多少？国内的布点是否OK？所以至少来看，兼容模式需要长期存在。
+
+
+-------------------------answer 5 via  -------------------------
+
+
+微信每天产生的巨量信息，不可能全部通过一个已经『退出』中国的公司的服务器。电池电量和可靠性相比，后者显然更重要。
+
+
+-------------------------answer 6 via  -------------------------
+
+
+微信的google play版本根本不是单纯GCM推送！后台还挂着自己的推送服务，根本没有节约内存！
+
+
+-------------------------answer 7 via  -------------------------
+
+
+看看微信说明：Android微信智能心跳方案
+
+
+-------------------------answer 8 via  -------------------------
+
+
+安卓推送方式很多，app开个Service，GCM google play推送，定制机没有google play的用xmpp服务器。各有各的好处，service 稳定但费电，gcm 不占多余资源但常常会被墙，xmpp 也稳定但是需要自己部署服务器。 最好的办法就是 google在国内架设 gcm  哈哈
+
+
+-------------------------answer 9 via  -------------------------
+
+
+我是某公司的Android程序开发。一般情况下讨论用不用GCM，首先需要明确GCM的适用范围，然后我就去查GCM的详细信息，链接如下：Google Cloud Messaging for Android看完功能介绍，感觉好棒！赶快找设计师，设计师也说，“好棒！能不能看下有没有什么限制，毕竟中国对谷歌的服务限制很多。”赶快屁颠屁颠地去继续查文档，服务器有人管，我客户端就看客户端的内容好了，链接如下：Implementing GCM Client on Android看到了下面这么一段：Here are the requirements for running a GCM Android client:At a bare minimum, GCM requires devices running Android 2.2 or higher that also have the Google Play Store application installed, or an emulator running Android 2.2 with Google APIs. Note that you are not limited to deploying your Android applications through Google Play Store.However, if you want to continue to use new GCM features that are distributed through Google Play Services, the device must be running Android 2.3 or higher, or you can use an emulator running Android 2.3 with Google APIs.On Android devices, GCM uses an existing connection for Google services. For pre-3.0 devices, this requires users to set up their Google accounts on their mobile devices. A Google account is not a requirement on devices running Android 4.0.4 or higher.翻译：以下是Android客户端能运行GCM的条件：
+1. 最低配置，Android系统2.2及以上并且同时安装有Google Play应用商店，或者是使用了GoogleAPIs，系统在2.2及以上的Android模拟器。请注意你不会被限制需要适用Google Play应用商店来下载App；
+2. 然而，如果你想继续通过Google Play Services使用后续的GCM的新特性，设备系统必须等于或高于Android2.3（偷懒，模拟器相关支持就不翻译了）；
+3. 在Android设备上，GCM使用Google Services上存在的一个连接。对于3.0之前的设备，需要用户在移动设备上设置好谷歌账号。在Android4.0.4及以上版本则不需要谷歌账号。
+我不要新服务我对账号没要求我只要最低配置，即使只看完第一条我也就Oh shit了，2.2系统完全没问题，问题是国内的手机能有几台安装了Google Play呢（包括后期自己装的）？！这时不是很Geek又懒（买国行Android还不刷机）的我还抱着点希望，打开我买的某国外品牌Android机的国行版本，下载了一个Google Services（Google Play依赖Google Services，没Services时Google Play无法正常使用），然后这个Services就不停地循环报崩溃...崩溃...崩溃...崩溃...然后我就崩溃了（卸掉）！再次找到设计师，不行诶，必须要Google Play支持，但我的手机就不支持...设计师一脸黑线“那不行啊，这么搞的话国内至少一半手机用不了，推送量直接大降我能忍老板也不能忍啊！”于是GCM就此无限期搁置......－－－－－－－－－－－－－－－补充分割－－－－－－－－－－－－－－－有人提议双推送机制，有GCM用GCM，没有的时候再用Service。答：对于绝大多数Android程序员来说（包括我），这是很无聊的一件事，需求有不少，还有好多BUG等着解，除非特别有必要，否则才懒得搞两套机制。什么，设计师问上述方案能不能实现？能啊，So easy，但你看我还有这么多需求等着实现，这么多BUG等着解，设计师你提个Task吧，Task优先级标记为Low，等俺未来（不知多少年以后）再来实现吧！

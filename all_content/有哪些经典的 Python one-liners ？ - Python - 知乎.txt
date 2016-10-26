@@ -1,0 +1,36 @@
+
+
+
+有哪些经典的 Python one-liners ？ - Python - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/20506670 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+把你认为很经典的Python one-liner列举一下吧。倒不一定要局限于1行，最好在10行内完成特定功能的代码抛砖：def qsort1(list):    """    Quicksort using list comprehensions    >>> qsort1<<docstring test numeric input>>    <<docstring test numeric output>>    >>> qsort1<<docstring test string input>>    <<docstring test string output>>    """    if list == []:         return []    else:        pivot = list[0]        lesser = qsort1([x for x in list[1:] if x < pivot])        greater = qsort1([x for x in list[1:] if x >= pivot])        return lesser + [pivot] + greater
+
+-------------------------answer 0 via  -------------------------
+
+
+感觉楼主给的例子的写法更适合Haskell而非Python。我见过的几个Python比较帅的写法有：O(n)的n!的算法（其实这个写法也很函数式）：reduce(operator.mul, range(1, n + 1))把一个Python中的dictionary转换成一个类，把key对应成attribute：class Struct:    def __init__(self, **entries):self.__dict__.update(entries)if __name__ == "__main__":    d = {'a' : 1, 'b' : 2}    s = Struct(**d)    print s.a, s.b
+
+
+-------------------------answer 1 via  -------------------------
+
+
+qsort 明明只用一行：qsort = lambda l: qsort([x for x in l if x < l[0]])+[x for x in l if x == l[0]]+qsort([x for x in l if x > l[0]]) if l else []
+
+
+-------------------------answer 2 via  -------------------------
+
+
+import this 输出：The Zen of Python, by Tim PetersBeautiful is better than ugly.Explicit is better than implicit.Simple is better than complex.Complex is better than complicated.Flat is better than nested.Sparse is better than dense.Readability counts.Special cases aren't special enough to break the rules.Although practicality beats purity.Errors should never pass silently.Unless explicitly silenced.In the face of ambiguity, refuse the temptation to guess.There should be one-- and preferably only one --obvious way to do it.Although that way may not be obvious at first unless you're Dutch.Now is better than never.Although never is often better than *right* now.If the implementation is hard to explain, it's a bad idea.If the implementation is easy to explain, it may be a good idea.Namespaces are one honking great idea -- let's do more of those!

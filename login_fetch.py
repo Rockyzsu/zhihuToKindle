@@ -56,9 +56,9 @@ def Login():
     login_url='http://www.zhihu.com/login/email'
     data={
     '_xsrf':xsrf,
-    'password':'你的密码',
+    'password':'javalinux',
     'remember_me':'true',
-    'email':'你的邮箱'
+    'email':'chen_jinwei@126.com'
     }
     try:
         content=session.post(login_url,data=data,headers=headers)

@@ -1,0 +1,48 @@
+
+
+
+android studio没有浮现函数用法和属性说明？ - 编程 - 知乎
+
+
+
+
+
+
+--------------------Link http://www.zhihu.com/question/24205125 ----------------------
+
+
+
+
+
+--------------------Detail----------------------
+
+最近转用android studio，在使用eclipse和android studio时原本在鼠标停留处或智能提示能浮现文档相关内容，但我的是一直显示Fetching Documentation……（如上所示已经有Documentation）
+
+-------------------------answer 0 via  -------------------------
+
+
+还有可能是你的函数是重载函数，不同的参数有不同的文档显示，所以无法显示你想要的那个函数。 当你把所有参数写出来后，as就可以正常识别到你想要查询的函数。 
+
+
+-------------------------answer 1 via  -------------------------
+
+
+默认是从网络获取，配置了代理就能显示。要从本地获取，可以修改一个配置文件：以Windows为例：C:\Users\用户名\.AndroidStudio2.2\config\options\jdk.table.xml
+修改javadocPath的url，sdk配置了多少个Platform就有多少个javadocPath。
+
+默认是：http://developer.android.com/reference/
+修改为：file://C:/Program_117/android-sdk-windows/sources/android-23
+按自己的sdk实际路径修改即可，重启生效。
+
+
+
+-------------------------answer 2 via  -------------------------
+
+
+1、关闭 AndroidStudio；1、找到 c:\Users\xxxxx\.AndroidStudioBeta\ 文件夹，删除它；2、启动 AndroidStudio, 在初始化界面 Configure 重新设置 sdk 路径。参考：ide - Android Studio quick documentation always "fetching documentation"
+
+
+-------------------------answer 3 via  -------------------------
+
+
+选中他就行了。然后鼠标在函数附近会显示该函数的一些信息选中他就行了。然后鼠标在函数附近会显示该函数的一些信息
