@@ -1,4 +1,14 @@
 # -*-coding=utf-8-*-
+'''
+在当前文件夹下创建data.cfg
+第一行是用户名
+第二行是用户密码
+
+例如：
+zhangsan
+123456
+'''
+
 __author__ = 'Rocky'
 import requests
 import cookielib
