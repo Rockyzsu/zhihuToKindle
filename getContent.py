@@ -45,7 +45,7 @@ class GetContent():
         req = urllib2.Request(url, headers=header)
 
         try:
-            resp = urllib2.urlopen(req)
+            resp = urllib2.urlopen(req,timeout=20)
             content= resp.read()
             if content is None:
                 print "Empty"
@@ -54,7 +54,7 @@ class GetContent():
             print "Time out. Retry"
             time.sleep(30)
             # try to switch with proxy ip
-            resp = urllib2.urlopen(req)
+            resp = urllib2.urlopen(req,timeout=20)
             content = resp.read()
             if content is None:
                 print "Empty"
