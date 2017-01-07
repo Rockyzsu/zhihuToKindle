@@ -16,7 +16,7 @@ def getNext(answerID,offset):
         # 构造header 伪装一下
 
         req=urllib2.Request(url=request_url,data=post_data,headers=header)
-        resp=urllib2.urlopen(req).read()
+        resp=urllib2.urlopen(req,timeout=20).read()
         #返回的是str， 转成dict
         resp_dict=json.loads(resp)
         #print resp_dict
@@ -26,7 +26,7 @@ def getAnswer(link):
     p='<div class="zm-editable-content clearfix">(.*?)</div>'
     #test_link="https://www.zhihu.com/question/50737023/answer/123268369"
     req=urllib2.Request(url=link,headers=header)
-    content=urllib2.urlopen(req).read()
+    content=urllib2.urlopen(req,timeout=20).read()
     #print content
     s=re.findall(p,content,re.S)
     if len(s)==0:
@@ -37,7 +37,7 @@ def getOffset(answerID):
     request_url='https://www.zhihu.com/question/'+str(answerID)
     #print request_url
     req=urllib2.Request(url=request_url,headers=header)
-    content=urllib2.urlopen(req).read()
+    content=urllib2.urlopen(req,timeout=20).read()
     #print content
     pattern=re.compile(r'<h3 data-num="\d+" id="zh-question-answer-num">(\d+) 个回答</h3>')
 
@@ -111,7 +111,7 @@ def test_link():
     answerID=28672128
     lnk="https://www.zhihu.com/question/28672128/answer/52384944"
     req=urllib2.Request(url=lnk,headers=header)
-    content=urllib2.urlopen(req).read()
+    content=urllib2.urlopen(req,timeout=20).read()
     print content
     p='<a href="/question/%s/answer/(\d+)"'  % str(answerID)
     #p='<a href="/question/%s/answer/(\d+)"'  % str(answerID)
