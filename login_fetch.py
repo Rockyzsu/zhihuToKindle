@@ -17,6 +17,7 @@ import json
 import time
 import os
 from getContent import GetContent
+import next_page
 
 agent = 'Mozilla/5.0 (Windows NT 5.1; rv:33.0) Gecko/20100101 Firefox/33.0'
 headers = {'Host': 'www.zhihu.com',
@@ -56,9 +57,10 @@ def isLogin():
 
 
 def get_xsrf():
-    url = 'http://www.zhihu.com'
+    url = 'https://www.zhihu.com'
     r = session.get(url, headers=headers, allow_redirects=False)
     txt = r.text
+    print txt
     result = re.findall(r'<input type=\"hidden\" name=\"_xsrf\" value=\"(\w+)\"/>', txt)[0]
     return result
 
@@ -79,7 +81,7 @@ def Login():
     xsrf = get_xsrf()
     print xsrf
     print len(xsrf)
-    login_url = 'http://www.zhihu.com/login/email'
+    login_url = 'https://www.zhihu.com/login/email'
     data = {
         '_xsrf': xsrf,
         'password': pwd,
@@ -110,6 +112,7 @@ def Login():
                 #print login_code
         else:
             session.cookies.save()
+            return True
     except:
         print "Error in login"
         return False
@@ -179,7 +182,11 @@ def main():
         print "Has login"
     else:
         print "Need to login"
-        Login()
+        r=Login()
+        if not r:
+            "Login failed. Exit !"
+            exit()
+
     list_id = focus_question()
     sub_folder = os.path.join(os.getcwd(), "content")
     #专门用于存放下载的电子书的目录
@@ -206,10 +213,12 @@ def main():
     new_list = list(set(old_list + list_id))
 
     fail_file = open("failed_list.txt", 'w')
-    for i in new_list:
 
+
+    for i in new_list:
         #print i
-        obj = GetContent(i)
+
+        obj = GetContent(i.strip())
         if obj == False:
             print "stop on %s" % i
             fail_file.write(i)
@@ -218,6 +227,7 @@ def main():
     new_fp.write(sep.join(new_list))
     new_fp.close()
     #getCaptcha()
+
 
 
 if __name__ == '__main__':

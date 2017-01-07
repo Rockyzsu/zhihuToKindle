@@ -1,6 +1,5 @@
 # -*-coding=utf-8-*-
 __author__ = 'Rocky'
-# -*-coding=utf-8-*-
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import smtplib
@@ -14,7 +13,7 @@ import os
 from bs4 import BeautifulSoup
 
 from email.Header import Header
-
+import next_page
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -25,8 +24,8 @@ class GetContent():
         # 比如 想要下载的问题链接是 https://www.zhihu.com/question/29372574
         # 那么 就输入 python zhihu.py 29372574
 
-        id_link = "/question/" + id
-        self.getAnswer(id_link)
+
+        self.getAnswer(id)
 
     def save2file(self, filename, content):
         # 保存为电子书文件
@@ -37,7 +36,7 @@ class GetContent():
 
     def getAnswer(self, answerID):
         host = "http://www.zhihu.com"
-        url = host + answerID
+        url = host + '/question/'+answerID
         print url
         user_agent = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"
         # 构造header 伪装一下
@@ -94,16 +93,19 @@ class GetContent():
 
             for i in detail.strings:
                 self.save2file(filename, unicode(i))
-
+        '''
         else:
             return False
 
+        '''
+
+        '''
         answer = bs.find_all("div", class_="zm-editable-content clearfix")
         k = 0
         index = 0
         for each_answer in answer:
 
-            self.save2file(filename, "\n\n-------------------------answer %s via  -------------------------\n\n" % k)
+            self.save2file(filename, -------------------------answer %s via  -------------------------\n\ % k)
 
             for a in each_answer.strings:
                 # 循环获取每一个答案的内容，然后保存到文件中
@@ -111,16 +113,20 @@ class GetContent():
             k += 1
             index = index + 1
 
-
+        '''
         #点击更多按钮的bug
         #构造header
-        reqest_url={'Request URL':'https://www.zhihu.com/node/QuestionAnswerListV2'}
-        request_url='https://www.zhihu.com/node/QuestionAnswerListV2'
-        #ref={'Referer':'https://www.zhihu.com/question/50737023'}
-        params={"url_token":"","pagesize":"10","offset":"20"}
-        data={'method':'next'}
-
-
+        new_answer=next_page.getAll_Answer(answerID)
+        k = 0
+        index = 0
+        print new_answer
+        if new_answer is None:
+            return 0
+        for each_answer in new_answer :
+            self.save2file(filename, "\n\n-------------------------answer %d  -------------------------\n" % k)
+            sub_answer=re.sub('<br>|</br>|<p>|</p>','\n', each_answer)
+            self.save2file(filename, unicode(sub_answer))
+            k=k+1
 
 
         smtp_server = 'smtp.126.com'
