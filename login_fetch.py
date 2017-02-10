@@ -174,6 +174,7 @@ def focus_question():
         except:
             print "Getting Error "
 
+
     return id_list
 
 

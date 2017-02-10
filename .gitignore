@@ -1,10 +1,6 @@
 *.pyc
 /.idea
-<<<<<<< HEAD
 /content
+/content_v1
+/content_v2
 data.cfg
-
-=======
-data.cfg
-/content
->>>>>>> origin/master
