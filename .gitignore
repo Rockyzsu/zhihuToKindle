@@ -1,5 +1,10 @@
 *.pyc
 /.idea
+<<<<<<< HEAD
 /content
 data.cfg
 
+=======
+data.cfg
+/content
+>>>>>>> origin/master
