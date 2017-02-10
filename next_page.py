@@ -20,7 +20,6 @@ def getNext(answerID,offset):
 
         resp=urllib2.urlopen(req,timeout=20).read()
 
-        resp=urllib2.urlopen(req,timeout=20).read()
 
         #返回的是str， 转成dict
         resp_dict=json.loads(resp)
@@ -35,8 +34,6 @@ def getAnswer(link):
 
     content=urllib2.urlopen(req,timeout=20).read()
 
-    content=urllib2.urlopen(req,timeout=20).read()
-
     #print content
     s=re.findall(p,content,re.S)
     if len(s)==0:
@@ -47,8 +44,6 @@ def getOffset(answerID):
     request_url='https://www.zhihu.com/question/'+str(answerID)
     #print request_url
     req=urllib2.Request(url=request_url,headers=header)
-
-    content=urllib2.urlopen(req,timeout=20).read()
 
     content=urllib2.urlopen(req,timeout=20).read()
 
