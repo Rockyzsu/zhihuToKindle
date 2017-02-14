@@ -141,6 +141,7 @@ class GetContent():
         print filename
 
 
+
 class MailAtt():
     def __init__(self, smtp_server, from_mail, password, to_mail):
         self.server = smtp_server
