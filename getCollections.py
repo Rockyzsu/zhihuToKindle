@@ -5,7 +5,11 @@ import cookielib
 import re
 import json
 import time
+from bs4 import BeautifulSoup
 import os
+from lxml import etree
+import codecs
+
 session = requests.session()
 
 session.cookies = cookielib.LWPCookieJar(filename="cookies")
@@ -93,8 +97,38 @@ def isLogin():
         return True
     else:
         return False
+def save2file(filename, content):
+    # 保存为电子书文件
+    filename = filename + ".txt"
+    f = codecs.open(filename, 'a',encoding='utf-8')
+    f.write(content)
+    f.close()
+
+def getAnswer(url):
+    #这个功能已经实现
+    html=session.get(url,headers=headers,allow_redirects=False)
+    s=html.text
+
+    tree=etree.HTML(s)
+    title=tree.xpath('//title/text()')[0]
+
+    filename_old = title.strip()
+    filename = re.sub('[\/:*?"<>|]', '-', filename_old)
+    # 用来保存内容的文件名，因为文件名不能有一些特殊符号，所以使用正则表达式过滤掉
+    print filename
+    save2file(filename, title)
+
+    save2file(filename, "\n\n--------------------Link %s ----------------------\n"  %url)
+    save2file(filename, "\n\n--------------------Detail----------------------\n\n")
+    # 获取问题的补充内容
+    content=tree.xpath('//div[@class="zm-editable-content clearfix"]/text()')
+    for i in content:
+        #print i
+        save2file(filename,i)
+
 
 def getCollections():
+    #实现，获取所有的collection 的link
     links=[]
     url='https://www.zhihu.com/collections/mine'
     Login()
@@ -102,21 +136,31 @@ def getCollections():
     if isLogin():
         content=session.get(url,headers=headers,allow_redirects=False)
         s= content.text
-        print s
 
         p=re.compile(r'<h2 class=\"zm-item-title\">\s+<a href=\"(.*?)\" >')
         result=p.findall(s,re.S)
-        print result
         if result is not None:
-            for i in result:
-                #print i
-                links.append(i)
-        print links
-    return links
+            return result
+        else:
+            return None
 
-def gerEachQuestion(url):
-    url="https://www.zhihu.com"+url
-    p=r'<h2 class="zm-item-title"><a target="_blank" href="/question/(\d+)">'
-    content=session.get(url,headers=headers,allow_redirects=False)
-    s= content.text
-getCollections()
+def getEachQuestion(url):
+    s=session.get(url,headers=headers,allow_redirects=False)
+    tree=etree.HTML(s.text)
+    result=tree.xpath('//link[@itemprop="url"]/@href')
+    return result
+
+
+if __name__=='__main__':
+
+    collection_link=getCollections()
+    '''
+    collection=['https://www.zhihu.com'+i for i in collection_link]
+    print collection
+    '''
+    for i in collection_link:
+        link="https://www.zhihu.com"+i
+        
+    #url='https://www.zhihu.com/collection/40627095'
+    #getEachQuestion(url)
+    #getAnswer('https://www.zhihu.com/question/30348020/answer/144386645')
