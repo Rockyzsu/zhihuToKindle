@@ -121,10 +121,12 @@ def getAnswer(url):
     save2file(filename, "\n\n--------------------Link %s ----------------------\n"  %url)
     save2file(filename, "\n\n--------------------Detail----------------------\n\n")
     # 获取问题的补充内容
-    content=tree.xpath('//div[@class="zm-editable-content clearfix"]/text()')
+    content=tree.xpath('//div[@class="zm-editable-content clearfix"]')
     for i in content:
         #print i
-        save2file(filename,i)
+        text_content=i.xpath("string(.)")
+        save2file(filename,text_content)
+    print "Done"
 
 
 def getCollections():
@@ -152,15 +154,47 @@ def getEachQuestion(url):
 
 
 if __name__=='__main__':
+    sub_folder = os.path.join(os.getcwd(), "collections")
+    # 专门用于存放下载的电子书的目录
 
+    if not os.path.exists(sub_folder):
+        os.mkdir(sub_folder)
+
+    os.chdir(sub_folder)
+    host='https://www.zhihu.com'
     collection_link=getCollections()
+
+    for i in collection_link:
+        print i
+
+        page=1
+        while 1:
+            scan_link=collection_url=host+i+'?page=%d' %page
+            return_content=session.get(scan_link,headers=headers,allow_redirects=False).text
+
+            tree=etree.HTML(return_content)
+            result=tree.xpath('//link[@itemprop="url"]/@href')
+            for j in result:
+                print j
+                pttrn=re.compile('zhuanlan')
+                if pttrn.findall(j):
+                    print j
+                    print "skip zhuanlan first"
+                    continue
+                getAnswer(host+j)
+            p=re.compile(u'<span class="zg-gray-normal">下一页</span>')
+            if p.search(return_content):
+                break
+            p2=re.compile(u'下一页')
+            if p2.search(return_content) is None:
+                break
+            page=page+1
+
     '''
     collection=['https://www.zhihu.com'+i for i in collection_link]
     print collection
     '''
-    for i in collection_link:
-        link="https://www.zhihu.com"+i
-        
+
     #url='https://www.zhihu.com/collection/40627095'
     #getEachQuestion(url)
     #getAnswer('https://www.zhihu.com/question/30348020/answer/144386645')
